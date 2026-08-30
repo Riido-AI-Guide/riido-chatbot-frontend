@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router';
 
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ErrorNotice } from '@/components/chat/ErrorNotice';
@@ -6,6 +7,7 @@ import { MessageBubble } from '@/components/chat/MessageBubble';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { Button } from '@/components/ui/button';
 import { useChat } from '@/hooks/useChat';
+import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
 
 const EXAMPLE_QUERIES = [
   'ERD 먼저 짜는 게 나을까?',
@@ -16,6 +18,8 @@ const EXAMPLE_QUERIES = [
 export default function Home() {
   const { conversationId, messages, error, isSending, send, retry, reset } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const user = getCurrentUser();
 
   // 메시지가 늘거나 로딩/에러 상태가 바뀔 때마다 맨 아래로 따라 내려간다.
   useEffect(() => {
@@ -35,11 +39,27 @@ export default function Home() {
             </span>
           )}
         </div>
-        {!isEmpty && (
-          <Button variant="ghost" size="sm" onClick={reset}>
-            새 대화
+        <div className="flex items-center gap-1">
+          {!isEmpty && (
+            <Button variant="ghost" size="sm" onClick={reset}>
+              새 대화
+            </Button>
+          )}
+          <Button variant="ghost" size="sm" onClick={() => navigate('/members')}>
+            멤버
           </Button>
-        )}
+          <span className="text-muted-foreground px-1 text-xs">{user?.name}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              clearCurrentUser();
+              navigate('/login', { replace: true });
+            }}
+          >
+            로그아웃
+          </Button>
+        </div>
       </header>
 
       <main className="min-h-0 flex-1 overflow-y-auto">
