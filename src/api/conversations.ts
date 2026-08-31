@@ -71,18 +71,20 @@ export function createConversation(
   });
 }
 
-// TODO(backend): 같은 대화에 이어서 질문하는 POST /conversations/{id}/messages가 생기면
-// 아래 형태로 추가하고, useChat의 requestReply에서 conversationId 유무로 분기하면 된다.
-//
-// export function appendMessage(
-//   conversationId: number,
-//   query: string,
-//   signal?: AbortSignal,
-// ): Promise<ConversationResponse> {
-//   const body: CreateConversationRequest = { query };
-//   return request<ConversationResponse>(`/conversations/${conversationId}/messages`, {
-//     method: 'POST',
-//     body: JSON.stringify(body),
-//     signal,
-//   });
-// }
+/**
+ * 기존 대화에 이어서 질문한다. 백엔드가 이전 대화를 AI에 함께 보내
+ * 대명사·생략("그럼 그거는?")을 풀어서 답한다.
+ */
+export function appendMessage(
+  conversationId: number,
+  query: string,
+  signal?: AbortSignal,
+): Promise<ConversationResponse> {
+  const body: CreateConversationRequest = { query };
+
+  return request<ConversationResponse>(`/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    signal,
+  });
+}

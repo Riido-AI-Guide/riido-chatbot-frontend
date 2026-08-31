@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import { toUserMessage } from '@/api/client';
 import {
+  appendMessage,
   createConversation,
   fetchConversation,
   type ConversationResponse,
@@ -45,10 +46,11 @@ export function useChat() {
     setError(null);
 
     try {
-      // 지금은 대화 이어가기 API가 없어 질문할 때마다 새 대화를 만든다.
-      // POST /conversations/{id}/messages가 생기면 여기서
-      // conversationId가 있을 때 appendMessage로 분기하면 된다.
-      const conversation: ConversationResponse = await createConversation(query);
+      // 열려 있는 대화가 있으면 이어가고(멀티턴), 없으면 새 대화를 만든다.
+      const conversation: ConversationResponse =
+        conversationId === null
+          ? await createConversation(query)
+          : await appendMessage(conversationId, query);
 
       setConversationId(conversation.conversationId);
       setTitle(conversation.title);
@@ -63,7 +65,7 @@ export function useChat() {
       setError(toUserMessage(caught));
       setStatus('error');
     }
-  }, []);
+  }, [conversationId]);
 
   const send = useCallback(
     (rawQuery: string) => {
