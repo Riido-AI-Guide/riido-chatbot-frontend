@@ -3,6 +3,7 @@ import { useCallback, useRef, useState } from 'react';
 import { toUserMessage } from '@/api/client';
 import {
   createConversation,
+  fetchConversation,
   type ConversationResponse,
   type Message,
   type Role,
@@ -97,6 +98,30 @@ export function useChat() {
     void requestReply(query);
   }, [requestReply, status]);
 
+  /** 사이드바에서 고른 옛 대화를 불러와 화면에 띄운다. */
+  const loadConversation = useCallback(
+    async (id: number) => {
+      if (status === 'sending') {
+        return;
+      }
+      setStatus('sending');
+      setError(null);
+      pendingQueryRef.current = null;
+
+      try {
+        const conversation = await fetchConversation(id);
+        setConversationId(conversation.conversationId);
+        setTitle(conversation.title);
+        setMessages(conversation.messages.map(toChatMessage));
+        setStatus('idle');
+      } catch (caught) {
+        setError(toUserMessage(caught));
+        setStatus('error');
+      }
+    },
+    [status],
+  );
+
   const reset = useCallback(() => {
     pendingQueryRef.current = null;
     setConversationId(null);
@@ -116,5 +141,6 @@ export function useChat() {
     send,
     retry,
     reset,
+    loadConversation,
   };
 }
