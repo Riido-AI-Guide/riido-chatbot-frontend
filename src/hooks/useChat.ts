@@ -41,31 +41,34 @@ export function useChat() {
   const pendingQueryRef = useRef<string | null>(null);
   const localIdRef = useRef(0);
 
-  const requestReply = useCallback(async (query: string) => {
-    setStatus('sending');
-    setError(null);
+  const requestReply = useCallback(
+    async (query: string) => {
+      setStatus('sending');
+      setError(null);
 
-    try {
-      // 열려 있는 대화가 있으면 이어가고(멀티턴), 없으면 새 대화를 만든다.
-      const conversation: ConversationResponse =
-        conversationId === null
-          ? await createConversation(query)
-          : await appendMessage(conversationId, query);
+      try {
+        // 열려 있는 대화가 있으면 이어가고(멀티턴), 없으면 새 대화를 만든다.
+        const conversation: ConversationResponse =
+          conversationId === null
+            ? await createConversation(query)
+            : await appendMessage(conversationId, query);
 
-      setConversationId(conversation.conversationId);
-      setTitle(conversation.title);
-      // 서버가 준 messages가 정답이므로 낙관적 목록을 통째로 교체한다.
-      // (이어가기 API가 붙으면 교체 대신 이어붙이기로 바꾸면 된다.)
-      setMessages(conversation.messages.map(toChatMessage));
+        setConversationId(conversation.conversationId);
+        setTitle(conversation.title);
+        // 서버가 준 messages가 정답이므로 낙관적 목록을 통째로 교체한다.
+        // (이어가기 API가 붙으면 교체 대신 이어붙이기로 바꾸면 된다.)
+        setMessages(conversation.messages.map(toChatMessage));
 
-      pendingQueryRef.current = null;
-      setStatus('idle');
-    } catch (caught) {
-      // 낙관적으로 붙여 둔 사용자 메시지는 그대로 두고 재전송할 수 있게 한다.
-      setError(toUserMessage(caught));
-      setStatus('error');
-    }
-  }, [conversationId]);
+        pendingQueryRef.current = null;
+        setStatus('idle');
+      } catch (caught) {
+        // 낙관적으로 붙여 둔 사용자 메시지는 그대로 두고 재전송할 수 있게 한다.
+        setError(toUserMessage(caught));
+        setStatus('error');
+      }
+    },
+    [conversationId],
+  );
 
   const send = useCallback(
     (rawQuery: string) => {
