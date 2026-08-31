@@ -1,4 +1,5 @@
 import { request } from '@/api/client';
+import { getCurrentUser } from '@/lib/auth';
 
 export type Role = 'user' | 'assistant';
 
@@ -23,6 +24,8 @@ export type ConversationResponse = Conversation;
 
 export type CreateConversationRequest = {
   query: string;
+  /** 로그인한 사용자 id. 백엔드가 대화의 작성자로 기록한다 */
+  userId?: number;
 };
 
 /**
@@ -33,7 +36,10 @@ export function createConversation(
   query: string,
   signal?: AbortSignal,
 ): Promise<ConversationResponse> {
-  const body: CreateConversationRequest = { query };
+  const body: CreateConversationRequest = {
+    query,
+    userId: getCurrentUser()?.id,
+  };
 
   return request<ConversationResponse>('/conversations', {
     method: 'POST',
