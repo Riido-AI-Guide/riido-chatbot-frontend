@@ -22,6 +22,29 @@ export type Conversation = {
 
 export type ConversationResponse = Conversation;
 
+/** 대화 목록의 한 줄 (본문 없음) */
+export type ConversationSummary = {
+  conversationId: number;
+  title: string;
+  createdAt: string;
+};
+
+/** 내 대화 목록, 최신순 */
+export function fetchConversations(
+  userId: number,
+  signal?: AbortSignal,
+): Promise<ConversationSummary[]> {
+  return request<ConversationSummary[]>(`/conversations?userId=${userId}`, { signal });
+}
+
+/** 대화 하나를 메시지까지 포함해 조회 */
+export function fetchConversation(
+  conversationId: number,
+  signal?: AbortSignal,
+): Promise<ConversationResponse> {
+  return request<ConversationResponse>(`/conversations/${conversationId}`, { signal });
+}
+
 export type CreateConversationRequest = {
   query: string;
   /** 로그인한 사용자 id. 백엔드가 대화의 작성자로 기록한다 */
