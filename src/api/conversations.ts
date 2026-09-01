@@ -1,4 +1,5 @@
 import { request } from '@/api/client';
+import { getCurrentUser } from '@/lib/auth';
 
 export type Role = 'user' | 'assistant';
 
@@ -21,8 +22,33 @@ export type Conversation = {
 
 export type ConversationResponse = Conversation;
 
+/** 대화 목록의 한 줄 (본문 없음) */
+export type ConversationSummary = {
+  conversationId: number;
+  title: string;
+  createdAt: string;
+};
+
+/** 내 대화 목록, 최신순 */
+export function fetchConversations(
+  userId: number,
+  signal?: AbortSignal,
+): Promise<ConversationSummary[]> {
+  return request<ConversationSummary[]>(`/conversations?userId=${userId}`, { signal });
+}
+
+/** 대화 하나를 메시지까지 포함해 조회 */
+export function fetchConversation(
+  conversationId: number,
+  signal?: AbortSignal,
+): Promise<ConversationResponse> {
+  return request<ConversationResponse>(`/conversations/${conversationId}`, { signal });
+}
+
 export type CreateConversationRequest = {
   query: string;
+  /** 로그인한 사용자 id. 백엔드가 대화의 작성자로 기록한다 */
+  userId?: number;
 };
 
 /**
@@ -33,7 +59,10 @@ export function createConversation(
   query: string,
   signal?: AbortSignal,
 ): Promise<ConversationResponse> {
-  const body: CreateConversationRequest = { query };
+  const body: CreateConversationRequest = {
+    query,
+    userId: getCurrentUser()?.id,
+  };
 
   return request<ConversationResponse>('/conversations', {
     method: 'POST',
@@ -42,18 +71,20 @@ export function createConversation(
   });
 }
 
-// TODO(backend): 같은 대화에 이어서 질문하는 POST /conversations/{id}/messages가 생기면
-// 아래 형태로 추가하고, useChat의 requestReply에서 conversationId 유무로 분기하면 된다.
-//
-// export function appendMessage(
-//   conversationId: number,
-//   query: string,
-//   signal?: AbortSignal,
-// ): Promise<ConversationResponse> {
-//   const body: CreateConversationRequest = { query };
-//   return request<ConversationResponse>(`/conversations/${conversationId}/messages`, {
-//     method: 'POST',
-//     body: JSON.stringify(body),
-//     signal,
-//   });
-// }
+/**
+ * 기존 대화에 이어서 질문한다. 백엔드가 이전 대화를 AI에 함께 보내
+ * 대명사·생략("그럼 그거는?")을 풀어서 답한다.
+ */
+export function appendMessage(
+  conversationId: number,
+  query: string,
+  signal?: AbortSignal,
+): Promise<ConversationResponse> {
+  const body: CreateConversationRequest = { query };
+
+  return request<ConversationResponse>(`/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+    signal,
+  });
+}
