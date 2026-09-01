@@ -4,10 +4,11 @@ import { getCurrentUser } from '@/lib/auth';
 export type Role = 'user' | 'assistant';
 
 /**
- * 답변의 형태. 지금은 화면에서 쓰지 않고 값만 실어 나른다.
- * 서버가 새 값을 추가해도 깨지지 않도록 문자열로 둔다. (예: 'step')
+ * 답변의 형태. 메시지 버블 레이아웃을 고르는 데 쓴다.
+ * 서버가 목록에 없는 값을 보내면 화면은 평평한 fallback 레이아웃으로 떨어진다.
  */
-export type AnswerType = string;
+export type AnswerType =
+  'concept' | 'step' | 'judgement' | 'troubleshoot' | 'explore' | 'no_answer';
 
 /** 답변이 근거로 삼은 가이드 문서 한 곳 */
 export type Source = {
