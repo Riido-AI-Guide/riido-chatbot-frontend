@@ -15,23 +15,25 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div className={cn('flex flex-col gap-1', isUser ? 'items-end' : 'items-start')}>
       {isUser ? (
-        <div className="bg-primary text-primary-foreground max-w-[85%] rounded-2xl rounded-br-md px-4 py-3">
-          <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
+        <div className="bg-answer-shell max-w-[85%] rounded-2xl px-5 py-3">
+          <p className="text-base leading-relaxed break-words whitespace-pre-wrap">
             {message.content}
           </p>
         </div>
       ) : hasSections ? (
-        // 구조화된 답변은 박스 자체가 버블 역할을 하므로 말풍선 배경을 씌우지 않는다.
-        <div className="flex w-full flex-col gap-2">
-          {message.title !== null && (
-            <h3 className="px-1 text-sm font-semibold break-words">{message.title}</h3>
-          )}
-          <AnswerBody answerType={message.answerType} sections={message.sections} />
-        </div>
+        // 구조화된 답변은 AnswerShell이 말풍선까지 그리므로 여기서 배경을 씌우지 않는다.
+        <AnswerBody
+          title={message.title}
+          answerType={message.answerType}
+          sections={message.sections}
+        />
       ) : (
         // sections가 없으면 평문 content로 fallback
-        <div className="bg-muted text-foreground max-w-[85%] rounded-2xl rounded-bl-md px-4 py-3">
-          <Markdown content={message.content} />
+        <div className="bg-answer-shell max-w-[85%] rounded-2xl px-5 py-3">
+          {message.title !== null && (
+            <h3 className="mb-2 text-xl leading-tight font-medium break-words">{message.title}</h3>
+          )}
+          <Markdown content={message.content} variant="answer" />
         </div>
       )}
       <time

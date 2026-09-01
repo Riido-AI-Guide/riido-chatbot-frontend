@@ -29,7 +29,11 @@ export type ChatMessage = {
   createdAt: string;
 };
 
-export type ChatStatus = 'idle' | 'sending' | 'error';
+/**
+ * 'sending'은 답변을 기다리는 중, 'loading'은 옛 대화를 불러오는 중이다.
+ * 둘을 나눠 둬야 대화 전환에서는 '답변을 작성하고 있어요'를 안 띄울 수 있다.
+ */
+export type ChatStatus = 'idle' | 'sending' | 'loading' | 'error';
 
 function toChatMessage(message: Message): ChatMessage {
   return {
@@ -49,6 +53,9 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+
+  /** 답변 대기든 대화 로딩이든, 새 요청을 막아야 하는 상태 */
+  const isBusy = status === 'sending' || status === 'loading';
 
   /** 실패했을 때 재전송할 질문. 성공하면 비운다. */
   const pendingQueryRef = useRef<string | null>(null);
@@ -86,7 +93,7 @@ export function useChat() {
   const send = useCallback(
     (rawQuery: string) => {
       const query = rawQuery.trim();
-      if (!query || status === 'sending') {
+      if (!query || isBusy) {
         return;
       }
 
@@ -106,26 +113,27 @@ export function useChat() {
 
       void requestReply(query);
     },
-    [requestReply, status],
+    [requestReply, isBusy],
   );
 
   /** 실패한 질문을 다시 보낸다. 사용자 메시지는 이미 화면에 있으니 새로 추가하지 않는다. */
   const retry = useCallback(() => {
     const query = pendingQueryRef.current;
-    if (!query || status === 'sending') {
+    if (!query || isBusy) {
       return;
     }
 
     void requestReply(query);
-  }, [requestReply, status]);
+  }, [requestReply, isBusy]);
 
   /** 사이드바에서 고른 옛 대화를 불러와 화면에 띄운다. */
   const loadConversation = useCallback(
     async (id: number) => {
-      if (status === 'sending') {
+      if (isBusy) {
         return;
       }
-      setStatus('sending');
+      // 'sending'이 아니라 'loading'이다 — 대화 전환에는 타이핑 인디케이터를 띄우지 않는다.
+      setStatus('loading');
       setError(null);
       pendingQueryRef.current = null;
 
@@ -140,7 +148,7 @@ export function useChat() {
         setStatus('error');
       }
     },
-    [status],
+    [isBusy],
   );
 
   const reset = useCallback(() => {
@@ -158,7 +166,10 @@ export function useChat() {
     messages,
     status,
     error,
+    /** 답변 대기 중. 타이핑 인디케이터 표시 여부에 쓴다. */
     isSending: status === 'sending',
+    /** 답변 대기 + 대화 로딩. 입력·버튼 잠금에 쓴다. */
+    isBusy,
     send,
     retry,
     reset,

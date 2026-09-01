@@ -70,18 +70,40 @@ const components: Components = {
   td: ({ children }) => <td className="border-border border px-2 py-1">{children}</td>,
 };
 
+/**
+ * 답변 섹션 본문용. 목록 마커는 .answer-prose(index.css)가 CSS로 그리므로
+ * 여기서는 기본 list-style을 걷어내기만 한다.
+ */
+const answerComponents: Components = {
+  ...components,
+  p: ({ children }) => <p className="my-2 leading-[1.6] first:mt-0 last:mb-0">{children}</p>,
+  ul: ({ children }) => <ul>{children}</ul>,
+  ol: ({ children }) => <ol>{children}</ol>,
+  li: ({ children }) => <li>{children}</li>,
+};
+
 type MarkdownProps = {
   content: string;
+  /** 'answer'는 답변 버블 안에서 쓰는 서체·목록 스타일 */
+  variant?: 'chat' | 'answer';
   className?: string;
 };
 
-export function Markdown({ content, className }: MarkdownProps) {
+export function Markdown({ content, variant = 'chat', className }: MarkdownProps) {
+  const isAnswer = variant === 'answer';
+
   return (
-    <div className={cn('text-sm break-words', className)}>
+    <div
+      className={cn(
+        'break-words',
+        isAnswer ? 'answer-prose text-base leading-[1.6]' : 'text-sm',
+        className,
+      )}
+    >
       <ReactMarkdown
         remarkPlugins={REMARK_PLUGINS}
         rehypePlugins={REHYPE_PLUGINS}
-        components={components}
+        components={isAnswer ? answerComponents : components}
       >
         {content}
       </ReactMarkdown>

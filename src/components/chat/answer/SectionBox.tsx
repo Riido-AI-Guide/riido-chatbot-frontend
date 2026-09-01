@@ -2,27 +2,33 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
+/**
+ * 시안에 나오는 세 가지 박스.
+ * - note:  버블 위에 반투명하게 얹히는 강조 박스 (준비사항 · 조건 · 원인)
+ * - card:  답변 본문을 담는 흰 카드
+ * - inset: 카드 안에 한 겹 더 들어가는 박스 (특징 · 제한사항 · 추천 · 단계 목록)
+ */
+export type BoxVariant = 'note' | 'card' | 'inset';
+
+const VARIANTS: Record<BoxVariant, string> = {
+  note: 'bg-answer-note border-answer-note-border rounded-2xl border px-6 py-4',
+  card: 'bg-answer-card rounded-xl px-6 py-4',
+  inset: 'bg-answer-inset border-answer-inset-border rounded-2xl border p-4',
+};
+
 type SectionBoxProps = {
-  /** 중첩 깊이. 0이 바깥 박스이고, 깊어질수록 배경색을 번갈아 줘서 안팎을 구분한다. */
-  depth?: number;
+  variant: BoxVariant;
+  /** 자식 사이 간격. 카드는 24px, 나머지는 8px가 기본이다. */
+  gap?: 'sm' | 'md' | 'lg';
   className?: string;
   children: ReactNode;
 };
 
-/**
- * 답변 레이아웃의 박스. 테두리 + 깊이별 배경으로 박스 안의 박스를 구분한다.
- * 안이 빌 수 있는 박스는 호출하는 쪽에서 내용 유무를 먼저 확인하고 그린다.
- */
-export function SectionBox({ depth = 0, className, children }: SectionBoxProps) {
+const GAPS = { sm: 'gap-2', md: 'gap-3', lg: 'gap-6' } as const;
+
+export function SectionBox({ variant, gap = 'sm', className, children }: SectionBoxProps) {
   return (
-    <div
-      className={cn(
-        'border-border flex flex-col gap-3 rounded-xl border',
-        depth === 0 ? 'gap-4 rounded-2xl p-4' : 'p-3',
-        depth % 2 === 0 ? 'bg-background' : 'bg-muted',
-        className,
-      )}
-    >
+    <div className={cn('flex w-full flex-col', GAPS[gap], VARIANTS[variant], className)}>
       {children}
     </div>
   );

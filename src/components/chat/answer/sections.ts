@@ -23,3 +23,8 @@ export const HEADLINE_LABELS = ['핵심답변', '기능요약'];
 export function pickSection(sections: AnswerSection[], label: string): AnswerSection | undefined {
   return sections.find((section) => section.label === label);
 }
+
+/** 레이아웃이 자리를 못 잡아 준 섹션이 있는지. 카드를 열지 말지 판단할 때 쓴다. */
+export function hasRestSections(sections: AnswerSection[], except: string[]): boolean {
+  return sections.some((section) => !except.includes(section.label));
+}

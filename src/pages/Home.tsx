@@ -17,8 +17,17 @@ const EXAMPLE_QUERIES = [
 ];
 
 export default function Home() {
-  const { conversationId, messages, error, isSending, send, retry, reset, loadConversation } =
-    useChat();
+  const {
+    conversationId,
+    messages,
+    error,
+    isSending,
+    isBusy,
+    send,
+    retry,
+    reset,
+    loadConversation,
+  } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const user = getCurrentUser();
@@ -26,7 +35,7 @@ export default function Home() {
   // 메시지가 늘거나 로딩/에러 상태가 바뀔 때마다 맨 아래로 따라 내려간다.
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages, isSending, error]);
+  }, [messages, isBusy, error]);
 
   const isEmpty = messages.length === 0;
 
@@ -87,7 +96,7 @@ export default function Home() {
                       key={query}
                       variant="outline"
                       size="lg"
-                      disabled={isSending}
+                      disabled={isBusy}
                       onClick={() => send(query)}
                     >
                       {query}
@@ -108,7 +117,7 @@ export default function Home() {
 
         <footer className="border-border shrink-0 border-t px-4 py-3">
           <div className="mx-auto w-full max-w-2xl">
-            <ChatInput disabled={isSending} onSend={send} />
+            <ChatInput disabled={isBusy} onSend={send} />
           </div>
         </footer>
       </div>
