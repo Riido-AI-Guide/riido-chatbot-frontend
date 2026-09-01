@@ -5,6 +5,8 @@ import {
   appendMessage,
   createConversation,
   fetchConversation,
+  type AnswerSection,
+  type AnswerType,
   type ConversationResponse,
   type Message,
   type Role,
@@ -15,7 +17,15 @@ export type ChatMessage = {
   /** React key. 서버 메시지는 'server-{id}', 낙관적 메시지는 'local-{n}' */
   key: string;
   role: Role;
+  /** sections가 비어 있을 때 대신 그리는 평문(마크다운) */
   content: string;
+  /** assistant 답변 제목. 없으면 null */
+  title: string | null;
+  /** 답변 형태. 아직 화면에서 쓰지 않는다 */
+  answerType: AnswerType | null;
+  /** 구조화된 답변. 비어 있으면 content로 fallback */
+  sections: AnswerSection[];
+  /** UTC ISO-8601 문자열 */
   createdAt: string;
 };
 
@@ -26,6 +36,9 @@ function toChatMessage(message: Message): ChatMessage {
     key: `server-${message.id}`,
     role: message.role,
     content: message.content,
+    title: message.title ?? null,
+    answerType: message.answerType ?? null,
+    sections: message.sections ?? [],
     createdAt: message.createdAt,
   };
 }
@@ -82,6 +95,9 @@ export function useChat() {
         key: `local-${localIdRef.current}`,
         role: 'user',
         content: query,
+        title: null,
+        answerType: null,
+        sections: [],
         createdAt: new Date().toISOString(),
       };
 
