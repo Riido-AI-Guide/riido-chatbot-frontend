@@ -16,6 +16,8 @@ export type Source = {
   docId: string;
   /** 사람이 읽는 문서 위치 (예: '휴지통 > 복구 및 영구 삭제') */
   section: string;
+  /** 가이드 문서 원문 주소. 없으면 링크 없이 텍스트만 보여준다. */
+  url?: string;
 };
 
 /** 구조화된 답변의 한 덩어리 */

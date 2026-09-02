@@ -1,13 +1,15 @@
+import { ArrowUpRight } from 'lucide-react';
+
 import type { Source } from '@/api/conversations';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 type SourceButtonProps = {
   sources: Source[];
 };
 
 /**
- * 근거 문서 버튼. 문장 끝에 붙는 원형 버튼이고, 호버(키보드는 포커스)하면
- * 근거 문서 목록이 뜬다. 문서 전문을 본문에 늘어놓지 않기 위한 시안 요구사항이다.
+ * 근거 문서 버튼. 문장 끝에 붙는 원형 버튼이고, 호버(또는 클릭·키보드 포커스)하면
+ * 근거 문서 목록이 뜬다. url이 있는 항목은 눌러서 원문으로 이동할 수 있다.
  */
 export function SourceButton({ sources }: SourceButtonProps) {
   if (sources.length === 0) {
@@ -15,32 +17,55 @@ export function SourceButton({ sources }: SourceButtonProps) {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger
+    <Popover>
+      <PopoverTrigger
+        // 링크를 눌러야 하므로 호버로 열되 클릭·키보드로도 열 수 있게 둔다.
+        openOnHover
+        delay={100}
+        closeDelay={200}
         aria-label={`근거 문서 ${sources.length}건 보기`}
-        className="bg-answer-source mt-0.5 flex size-6 shrink-0 cursor-help items-center justify-center rounded-full outline-offset-2"
+        className="bg-answer-source mt-0.5 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full outline-offset-2"
       >
         {/* 시안: 24px 원 안에 15px 링 */}
         <span className="border-answer-source-ring size-[15px] rounded-full border" />
-      </TooltipTrigger>
-      <TooltipContent
+      </PopoverTrigger>
+      <PopoverContent
         side="right"
         align="start"
         sideOffset={8}
-        className="bg-answer-popup text-answer-popup-fg max-w-xs flex-col items-stretch gap-1 rounded-xl p-1.5 text-[0.8rem]"
+        // 마우스 호버로 열렸을 땐 포커스를 뺏지 않는다. 키보드로 연 경우에만 링크로 넘긴다.
+        initialFocus={(openType) => openType === 'keyboard'}
+        className="bg-answer-popup text-answer-popup-fg max-w-xs rounded-xl p-1.5 text-[0.8rem] shadow-none"
       >
         <ul className="flex flex-col gap-1">
-          {sources.map((source, index) => (
-            <li
-              key={`${source.docId}-${index}`}
-              className="bg-answer-popup-row flex items-center gap-2 rounded-lg px-2.5 py-1.5"
-            >
-              <span className="bg-answer-popup-fg/70 size-3 shrink-0 rounded-full" />
-              <span className="min-w-0 break-words">{source.section || source.docId}</span>
-            </li>
-          ))}
+          {sources.map((source, index) => {
+            const label = source.section || source.docId;
+
+            return (
+              <li key={`${source.docId}-${index}`}>
+                {source.url === undefined ? (
+                  <span className="bg-answer-popup-row flex items-center gap-2 rounded-lg px-2.5 py-1.5">
+                    <span className="bg-answer-popup-fg/70 size-3 shrink-0 rounded-full" />
+                    <span className="min-w-0 break-words">{label}</span>
+                  </span>
+                ) : (
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    title={source.docId}
+                    className="bg-answer-popup-row hover:bg-answer-popup-fg/25 flex items-center gap-2 rounded-lg px-2.5 py-1.5 outline-offset-2 transition-colors"
+                  >
+                    <span className="bg-answer-popup-fg/70 size-3 shrink-0 rounded-full" />
+                    <span className="min-w-0 break-words">{label}</span>
+                    <ArrowUpRight className="ml-auto size-3.5 shrink-0 opacity-70" aria-hidden />
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
-      </TooltipContent>
-    </Tooltip>
+      </PopoverContent>
+    </Popover>
   );
 }
