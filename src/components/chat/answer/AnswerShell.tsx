@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { AnswerFooter } from '@/components/chat/answer/AnswerFooter';
+
 type AnswerShellProps = {
   children: ReactNode;
 };
@@ -7,8 +9,11 @@ type AnswerShellProps = {
 /** 답변 전체를 감싸는 회색 말풍선 */
 export function AnswerShell({ children }: AnswerShellProps) {
   return (
-    <div className="bg-answer-shell w-full rounded-2xl px-4 pt-6 pb-4">
-      <div className="flex w-full flex-col gap-3">{children}</div>
+    <div className="bg-answer-shell w-full rounded-2xl px-4 pt-6 pb-2">
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col gap-3">{children}</div>
+        <AnswerFooter />
+      </div>
     </div>
   );
 }
