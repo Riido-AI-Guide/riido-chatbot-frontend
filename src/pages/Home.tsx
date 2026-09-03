@@ -1,5 +1,5 @@
+import { ArrowUpRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router';
 
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ConversationSidebar } from '@/components/chat/ConversationSidebar';
@@ -8,7 +8,6 @@ import { MessageBubble } from '@/components/chat/MessageBubble';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { Button } from '@/components/ui/button';
 import { useChat } from '@/hooks/useChat';
-import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
 
 const EXAMPLE_QUERIES = [
   'ERD 먼저 짜는 게 나을까?',
@@ -17,16 +16,24 @@ const EXAMPLE_QUERIES = [
 ];
 
 export default function Home() {
-  const { conversationId, messages, error, isSending, send, retry, reset, loadConversation } =
-    useChat();
+  const {
+    conversationId,
+    title,
+    messages,
+    error,
+    isSending,
+    isBusy,
+    send,
+    retry,
+    reset,
+    loadConversation,
+  } = useChat();
   const bottomRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const user = getCurrentUser();
 
   // 메시지가 늘거나 로딩/에러 상태가 바뀔 때마다 맨 아래로 따라 내려간다.
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages, isSending, error]);
+  }, [messages, isBusy, error]);
 
   const isEmpty = messages.length === 0;
 
@@ -36,39 +43,29 @@ export default function Home() {
         activeId={conversationId}
         refreshKey={conversationId}
         onSelect={loadConversation}
+        onNewChat={reset}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-border flex shrink-0 items-center justify-between gap-4 border-b px-4 py-3">
-          <div className="flex items-baseline gap-2">
-            <h1 className="text-base font-semibold">리도 AI 가이드</h1>
+          <div className="flex min-w-0 items-baseline gap-2">
+            <h1 className="truncate text-base font-semibold">{title ?? '새 대화'}</h1>
             {conversationId !== null && (
-              <span className="text-muted-foreground text-xs tabular-nums">
+              <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
                 대화 #{conversationId}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-1">
-            {!isEmpty && (
-              <Button variant="ghost" size="sm" onClick={reset}>
-                새 대화
-              </Button>
-            )}
-            <Button variant="ghost" size="sm" onClick={() => navigate('/members')}>
-              멤버
-            </Button>
-            <span className="text-muted-foreground px-1 text-xs">{user?.name}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                clearCurrentUser();
-                navigate('/login', { replace: true });
-              }}
-            >
-              로그아웃
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            render={
+              <a href="https://docs.riido.io" target="_blank" rel="noreferrer noopener">
+                뤼이도 이용가이드
+                <ArrowUpRight data-icon="inline-end" />
+              </a>
+            }
+          />
         </header>
 
         <main className="min-h-0 flex-1 overflow-y-auto">
@@ -87,7 +84,7 @@ export default function Home() {
                       key={query}
                       variant="outline"
                       size="lg"
-                      disabled={isSending}
+                      disabled={isBusy}
                       onClick={() => send(query)}
                     >
                       {query}
@@ -108,7 +105,7 @@ export default function Home() {
 
         <footer className="border-border shrink-0 border-t px-4 py-3">
           <div className="mx-auto w-full max-w-2xl">
-            <ChatInput disabled={isSending} onSend={send} />
+            <ChatInput disabled={isBusy} onSend={send} />
           </div>
         </footer>
       </div>

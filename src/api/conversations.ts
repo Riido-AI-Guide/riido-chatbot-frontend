@@ -3,11 +3,44 @@ import { getCurrentUser } from '@/lib/auth';
 
 export type Role = 'user' | 'assistant';
 
+/**
+ * 답변의 형태. 메시지 버블 레이아웃을 고르는 데 쓴다.
+ * 서버가 목록에 없는 값을 보내면 화면은 평평한 fallback 레이아웃으로 떨어진다.
+ */
+export type AnswerType =
+  'concept' | 'step' | 'judgement' | 'troubleshoot' | 'explore' | 'no_answer';
+
+/** 답변이 근거로 삼은 가이드 문서 한 곳 */
+export type Source = {
+  /** 문서 식별자 (예: 'guide/휴지통/복구-및-영구-삭제') */
+  docId: string;
+  /** 사람이 읽는 문서 위치 (예: '휴지통 > 복구 및 영구 삭제') */
+  section: string;
+  /** 가이드 문서 원문 주소. 없으면 링크 없이 텍스트만 보여준다. */
+  url?: string;
+};
+
+/** 구조화된 답변의 한 덩어리 */
+export type AnswerSection = {
+  /** 섹션 제목 (예: '핵심답변') */
+  label: string;
+  /** 섹션 본문. 마크다운일 수 있다. */
+  text: string;
+  /** 이 섹션의 근거 문서. 없을 수 있다. */
+  sources?: Source[];
+};
+
 export type Message = {
   id: number;
   role: Role;
-  /** assistant의 경우 마크다운 문자열 */
+  /** sections가 없을 때 화면에 그리는 평문(마크다운) fallback */
   content: string;
+  /** assistant 답변의 제목. user 메시지는 null */
+  title?: string | null;
+  /** 답변 형태. user 메시지는 null */
+  answerType?: AnswerType | null;
+  /** 구조화된 답변. user 메시지나 구버전 응답에서는 비어 있다 */
+  sections?: AnswerSection[];
   /** UTC ISO-8601 초 단위 문자열 (예: '2026-08-24T14:20:01Z') */
   createdAt: string;
 };
