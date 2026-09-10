@@ -6,10 +6,10 @@ type AnswerShellProps = {
   children: ReactNode;
 };
 
-/** 답변 전체를 감싸는 회색 말풍선 */
+/** 답변 전체를 감싸는 흰 카드 (Figma answer-1: 800px, border-disable, radius 16) */
 export function AnswerShell({ children }: AnswerShellProps) {
   return (
-    <div className="bg-answer-shell w-full rounded-2xl px-4 pt-6 pb-2">
+    <div className="bg-answer-shell border-answer-shell-border rounded-16 w-full border px-4 pt-6 pb-2">
       <div className="flex w-full flex-col gap-2">
         <div className="flex w-full flex-col gap-3">{children}</div>
         <AnswerFooter />
@@ -34,7 +34,11 @@ export function AnswerHeadline({ title, children }: AnswerHeadlineProps) {
 
   return (
     <div className="flex w-full flex-col gap-4 px-2">
-      {hasTitle && <h3 className="text-xl leading-tight font-medium break-words">{title}</h3>}
+      {hasTitle && (
+        <h3 className="text-text-primary text-title-20 font-semibold tracking-tight break-words">
+          {title}
+        </h3>
+      )}
       {children}
     </div>
   );

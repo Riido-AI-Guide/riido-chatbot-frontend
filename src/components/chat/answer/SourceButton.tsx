@@ -1,4 +1,6 @@
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Link } from 'lucide-react';
+
+import { ICON_STROKE } from '@/lib/icon';
 
 import type { Source } from '@/api/conversations';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -8,7 +10,7 @@ type SourceButtonProps = {
 };
 
 /**
- * 근거 문서 버튼. 문장 끝에 붙는 원형 버튼이고, 호버(또는 클릭·키보드 포커스)하면
+ * 근거 문서 버튼. 문장 끝에 붙는 링크 아이콘이고, 호버(또는 클릭·키보드 포커스)하면
  * 근거 문서 목록이 뜬다. url이 있는 항목은 눌러서 원문으로 이동할 수 있다.
  */
 export function SourceButton({ sources }: SourceButtonProps) {
@@ -24,10 +26,10 @@ export function SourceButton({ sources }: SourceButtonProps) {
         delay={100}
         closeDelay={200}
         aria-label={`근거 문서 ${sources.length}건 보기`}
-        className="bg-answer-source mt-0.5 flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-full outline-offset-2"
+        className="hover:bg-fill-hover rounded-6 flex size-6 shrink-0 cursor-pointer items-center justify-center outline-offset-2"
       >
-        {/* 시안: 24px 원 안에 15px 링 */}
-        <span className="border-answer-source-ring size-[15px] rounded-full border" />
+        {/* Figma answer-summary-row: 24px link 아이콘 */}
+        <Link className="text-icon-secondary size-5" strokeWidth={ICON_STROKE} aria-hidden />
       </PopoverTrigger>
       <PopoverContent
         side="right"

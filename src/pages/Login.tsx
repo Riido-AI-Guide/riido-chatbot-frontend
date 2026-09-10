@@ -1,29 +1,30 @@
-import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { toUserMessage } from '@/api/client';
 import { loginUser } from '@/api/users';
-import { Button } from '@/components/ui/button';
 import { saveCurrentUser } from '@/lib/auth';
+import { cn } from '@/lib/utils';
 
-const FIELD_CLASS =
-  'bg-muted placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-12 w-full rounded-2xl border border-transparent px-4 text-base outline-none focus-visible:ring-3';
-
+/**
+ * Figma `log in` (2238:11898)
+ * canvas-strong 배경 위에 700×372 카드(radius 24, shadow-xl).
+ * 좌: 이미지 영역(324×352, radius 16) / 우: 로고 + 로그인 + 닉네임 입력 + 버튼(270px)
+ * ※ Figma에 비밀번호 칸은 없다. 닉네임만 받는다.
+ */
 export default function Login() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  // 화면에만 있는 비밀번호 칸. 서버로 보내지 않고 로그인 조건에도 쓰지 않는다.
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const trimmed = name.trim();
+  const canSubmit = trimmed.length > 0 && !isSubmitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!trimmed || isSubmitting) return;
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -40,68 +41,57 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center px-4">
-      <div className="border-border bg-card w-full max-w-[400px] rounded-3xl border p-10">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col items-center gap-4">
-              {/* 프로필 사진 자리 — 업로드 기능이 붙기 전까지 원형 자리만 잡아 둔다 */}
-              <div className="bg-muted size-16 shrink-0 rounded-full" aria-hidden />
-              <div className="flex w-full flex-col gap-1 text-center">
-                <h1 className="text-xl font-semibold">리도 AI 가이드</h1>
-                <p className="text-muted-foreground text-base leading-normal">
-                  이름을 입력하면 시작할 수 있어요. 처음 온 이름이면 자동으로 가입돼요.
-                </p>
-              </div>
-            </div>
+    <div className="bg-background-canvas-strong flex h-screen items-center justify-center px-4">
+      <div className="bg-background-surface rounded-24 flex w-full max-w-[700px] gap-6 p-2.5 shadow-xl">
+        {/* TODO: 디자이너 일러스트 받으면 교체 (324×352) */}
+        <div
+          className="bg-background-surface-soft rounded-16 hidden h-[352px] w-[324px] shrink-0 md:block"
+          aria-hidden
+        />
 
-            <div className="flex flex-col gap-4">
-              <input
-                autoFocus
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={50}
-                placeholder="이름"
-                aria-label="이름"
-                className={FIELD_CLASS}
-              />
-
-              <div className="relative">
-                <input
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="off"
-                  placeholder="비밀번호"
-                  aria-label="비밀번호"
-                  className={`${FIELD_CLASS} pr-12`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsPasswordVisible((visible) => !visible)}
-                  aria-label={isPasswordVisible ? '비밀번호 숨기기' : '비밀번호 표시'}
-                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-4 -translate-y-1/2 rounded outline-offset-2"
-                >
-                  {isPasswordVisible ? (
-                    <Eye className="size-5" aria-hidden />
-                  ) : (
-                    <EyeOff className="size-5" aria-hidden />
-                  )}
-                </button>
-              </div>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-1 flex-col items-center justify-center gap-10 py-6 pr-8 pl-2"
+        >
+          <div className="flex flex-col items-center gap-4">
+            <img src={riidoSymbol} alt="Riido" className="size-10 shrink-0" />
+            <div className="flex flex-col items-center gap-1 text-center">
+              <h1 className="text-text-primary text-title-20 font-semibold tracking-tight">
+                로그인
+              </h1>
+              <p className="text-text-secondary text-body-16">닉네임을 입력하고 로그인해 주세요.</p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              disabled={!trimmed || isSubmitting}
-              className="h-12 w-full rounded-2xl text-base"
-            >
-              {isSubmitting ? '로그인 중…' : '로그인'}
-            </Button>
-            {error && <p className="text-destructive text-center text-sm">{error}</p>}
+          <div className="flex w-full max-w-[270px] flex-col gap-2">
+            <input
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={50}
+              placeholder="닉네임을 입력해 주세요."
+              aria-label="닉네임"
+              className={cn(
+                'bg-background-surface-soft text-text-primary placeholder:text-text-tertiary rounded-12 text-body-16 h-[50px] w-full px-5 outline-none',
+                'focus-visible:ring-ring/50 focus-visible:ring-3',
+              )}
+            />
+            {error && <p className="text-status-danger-text text-caption-12">{error}</p>}
           </div>
+
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={cn(
+              'rounded-12 text-button-16 flex h-[50px] w-full max-w-[270px] items-center justify-center font-medium tracking-wide transition-colors outline-none',
+              'focus-visible:ring-ring/50 focus-visible:ring-3',
+              canSubmit
+                ? 'bg-button-primary text-primary-on-solid hover:bg-primary-solid-strong'
+                : 'bg-button-neutral text-text-tertiary cursor-not-allowed',
+            )}
+          >
+            {isSubmitting ? '로그인 중…' : '로그인'}
+          </button>
         </form>
       </div>
     </div>
