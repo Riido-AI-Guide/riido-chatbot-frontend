@@ -66,7 +66,7 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
       <div className="flex shrink-0 items-center gap-4 p-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <img src={riidoSymbol} alt="" className="size-8 shrink-0" data-name="riido-symbol" />
-          <span className="text-text-primary text-title-20 truncate font-semibold tracking-tight">
+          <span className="text-text-primary text-title-20 truncate font-semibold tracking-[-0.4px]">
             Riido AI Guide
           </span>
         </div>
@@ -74,7 +74,7 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
           type="button"
           onClick={onCollapse}
           aria-label="사이드바 접기"
-          className="hover:bg-fill-hover focus-visible:ring-ring/50 rounded-12 flex size-10 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
+          className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex size-10 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
         >
           <PanelLeft className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
         </button>
@@ -114,7 +114,8 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
           (conversations.length === 0 ? (
             <p className="text-text-tertiary text-body-14 px-4 py-2">아직 대화가 없어요.</p>
           ) : (
-            <ul className="flex flex-col">
+            /* Figma sidebar-list-item-2: 40px, 좌측 1px 선 + gap 8 만큼 들여쓰기, pad 8, radius 12, hover: fill-surface-strong */
+            <ul className="flex flex-col pr-3 pl-[9px]">
               {conversations.map((conversation) => {
                 const isActive = conversation.conversationId === activeId;
                 return (
@@ -124,11 +125,10 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
                       onClick={() => onSelect(conversation.conversationId)}
                       aria-current={isActive ? 'page' : undefined}
                       className={cn(
-                        'hover:bg-fill-hover focus-visible:ring-ring/50 rounded-12 my-0.5 flex h-11 w-full items-center px-2 text-left outline-none focus-visible:ring-3',
-                        isActive && 'bg-background-surface-strong',
+                        'hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex h-10 w-full items-center px-2 text-left outline-none focus-visible:ring-3',
+                        isActive && 'bg-fill-surface-strong',
                       )}
                     >
-                      {/* Figma sidebar-list-item-2: Body/16, text-secondary, 선택 시 회색 pill */}
                       <span className="text-text-secondary text-body-16 truncate">
                         {conversation.title}
                       </span>
@@ -148,7 +148,7 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
         </div>
 
         <div className="border-border-strong border-t">
-          <p className="text-text-primary text-title-16 px-5 pt-4 pb-2 font-medium tracking-tight">
+          <p className="text-text-primary text-title-16 px-5 pt-4 pb-2 font-medium tracking-[-0.4px]">
             설정
           </p>
           <div className="pl-3">
@@ -166,12 +166,12 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
         <div className="border-border-strong border-t p-3">
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="hover:bg-fill-hover focus-visible:ring-ring/50 rounded-12 flex w-full items-center gap-2 text-left outline-none focus-visible:ring-3"
+              className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex w-full items-center gap-2 text-left outline-none focus-visible:ring-3"
               aria-label="프로필 메뉴"
             >
               <span className="flex size-10 shrink-0 items-center justify-center">
                 <span
-                  className="bg-background-surface-strong text-text-secondary text-title-16 flex size-8 items-center justify-center rounded-full font-medium tracking-tight"
+                  className="bg-background-surface-strong text-text-secondary text-title-16 flex size-8 items-center justify-center rounded-full font-medium tracking-[-0.4px]"
                   aria-hidden
                 >
                   {initial}

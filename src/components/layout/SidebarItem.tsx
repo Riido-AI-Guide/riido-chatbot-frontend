@@ -19,8 +19,8 @@ type SidebarItemProps = {
 };
 
 /**
- * Figma `sidebar-section-list-title` — 40px 높이 한 줄.
- * 좌측 40×40 아이콘 박스(안에 24px 아이콘) + Title/16 텍스트.
+ * Figma `sidebar-section-list-title` — 48px 줄(pad 4/0/4/12) 안에 40px hover-background(radius 12).
+ * 좌측 40×40 아이콘 박스(안에 24px 아이콘) + Title/16(ls -0.4) 텍스트. hover: fill-surface-strong(#E8EBED / #272F35)
  */
 export function SidebarItem({
   icon: Icon,
@@ -36,7 +36,7 @@ export function SidebarItem({
       <span className="flex size-10 shrink-0 items-center justify-center" aria-hidden>
         <Icon className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
       </span>
-      <span className="text-text-primary text-title-16 min-w-0 flex-1 truncate font-medium tracking-tight">
+      <span className="text-text-primary text-title-16 min-w-0 flex-1 truncate font-medium tracking-[-0.4px]">
         {label}
       </span>
     </>
@@ -46,8 +46,8 @@ export function SidebarItem({
     <div
       className={cn(
         'rounded-12 my-1 flex h-10 w-full items-center pr-3 transition-colors',
-        onClick && 'has-[button:hover]:bg-fill-hover',
-        active && 'bg-fill-press',
+        onClick && 'has-[button:hover]:bg-fill-surface-strong',
+        active && 'bg-fill-surface-strong',
         disabled && 'opacity-50',
         className,
       )}

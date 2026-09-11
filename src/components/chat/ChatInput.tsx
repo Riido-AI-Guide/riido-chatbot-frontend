@@ -1,8 +1,5 @@
 import { useState, type FormEvent, type KeyboardEvent } from 'react';
 import { ArrowUp, Mic } from 'lucide-react';
-import { Ring2 } from 'ldrs/react';
-import 'ldrs/react/Ring2.css';
-
 import { ICON_STROKE } from '@/lib/icon';
 import { cn } from '@/lib/utils';
 
@@ -13,8 +10,11 @@ type ChatInputProps = {
 
 /**
  * Figma `footer-input-box-light` (1345:3045)
- * 72px 박스: surface 배경 / border-disable / radius-16 / shadow-m
- * 우측 액션: 마이크(24) + 전송(40, 원형)
+ * 72px 박스: surface 배경 / border-disable 1px / radius 16 / shadow-m / pad 16/16/16/24 / gap 32
+ * 우측 액션(gap 8): mic 40 원형(hover: surface-soft) + send 40 원형
+ *   send disabled = fill-neutral(#F3F5F6) / active = button-inverse(#272F35) + 캔버스색 화살표
+ * 답변 대기 중엔 Figma chat-light-loading대로 send를 disabled로 둔다 (로더는 입력창 위 AnswerLoader).
+ * 아래 안내문: Body/14 text-secondary, gap 10
  */
 export function ChatInput({ disabled, onSend }: ChatInputProps) {
   const [value, setValue] = useState('');
@@ -76,7 +76,7 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
             type="button"
             disabled
             aria-label="음성으로 질문하기 (준비 중)"
-            className="hover:bg-fill-hover flex size-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="hover:bg-background-surface-soft flex size-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Mic className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
           </button>
@@ -88,23 +88,11 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
               'flex size-10 items-center justify-center rounded-full transition-colors outline-none',
               'focus-visible:ring-ring/50 focus-visible:ring-3',
               canSubmit
-                ? 'bg-primary-solid text-primary-on-solid hover:bg-primary-solid-strong'
-                : 'bg-background-surface-soft text-icon-disable cursor-not-allowed',
+                ? 'bg-button-inverse text-background-canvas'
+                : 'bg-fill-neutral text-icon-primary cursor-not-allowed',
             )}
           >
-            {disabled ? (
-              /* ldrs Ring 2 — Figma Opacity/Loader Track = 0 → bgOpacity 0 */
-              <Ring2
-                size="24"
-                stroke="2"
-                strokeLength="0.25"
-                bgOpacity="0"
-                speed="0.8"
-                color="var(--icon-secondary)"
-              />
-            ) : (
-              <ArrowUp className="size-6" strokeWidth={ICON_STROKE} aria-hidden />
-            )}
+            <ArrowUp className="size-6" strokeWidth={ICON_STROKE} aria-hidden />
           </button>
         </div>
       </div>

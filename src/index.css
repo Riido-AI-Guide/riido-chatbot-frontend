@@ -160,7 +160,7 @@
   --icon-bullet-marker: #272f35;
   /* ---------- Status / Danger ---------- */
   --status-danger-solid: #ec3c4b;
-  --status-danger-solid-hover: #ba1c29; /* Danger/700 (button 섹션 렌더값은 #e31c2d=600이었음) */
+  --status-danger-solid-hover: #e31c2d; /* Danger/600 — Figma danger-try again state=hover */
   --status-danger-text: #921c26;
   --status-danger-soft: #faebec;
   --status-danger-border: #f46773;
@@ -220,16 +220,22 @@
   --sidebar-border: var(--border-default);
   --sidebar-ring: var(--primary-solid);
 
-  /* ---- 답변 버블 팔레트 → riido 토큰으로 연결 (다크는 토큰이 알아서 바뀜) ---- */
-  --answer-shell: var(--background-answer); /* 흰 카드 (Figma answer-1) */
-  --answer-shell-border: var(--border-disable);
-  --answer-card: var(--fill-neutral); /* 카드 안 회색 섹션 박스 (개념 정리 등) */
-  --answer-note: var(--background-surface); /* 섹션 박스 안 참고 박스 */
-  --answer-note-border: var(--border-disable);
-  --answer-inset: var(--background-surface);
-  --answer-inset-border: var(--border-disable);
+  /* ---- 답변 버블 팔레트 → riido 토큰으로 연결 (Figma REST JSON 기준, 다크는 토큰이 알아서 바뀜) ----
+     shell  = answer-1 카드        : fill-neutral-strong  (#F3F5F6 / #1F262B) + border-strong
+     card   = answer-body-panel    : background-answer    (#FFFFFF / #1F262B) + border-strong
+     note   = 헤더 아래 info-box(팁·참고) : background-surface (#F9FAFB / #272F35) + border-neutral-strong
+     inset  = 본문 패널 안 info-box  : background-surface-soft (#F3F5F6 / #272F35) + border-neutral-strong
+     chip   = related-item        : background-surface + border-strong */
+  --answer-shell: var(--fill-neutral-strong);
+  --answer-shell-border: var(--border-strong);
+  --answer-card: var(--background-answer);
+  --answer-card-border: var(--border-strong);
+  --answer-note: var(--background-surface);
+  --answer-note-border: var(--border-neutral-strong);
+  --answer-inset: var(--background-surface-soft);
+  --answer-inset-border: var(--border-neutral-strong);
   --answer-chip: var(--background-surface);
-  --answer-chip-border: var(--border-disable);
+  --answer-chip-border: var(--border-strong);
   --answer-marker: var(--icon-bullet-marker);
   --answer-marker-fg: var(--text-step-number);
   --answer-source: var(--text-secondary);
@@ -611,6 +617,7 @@
   --color-answer-shell: var(--answer-shell);
   --color-answer-shell-border: var(--answer-shell-border);
   --color-answer-card: var(--answer-card);
+  --color-answer-card-border: var(--answer-card-border);
   --color-answer-note: var(--answer-note);
   --color-answer-note-border: var(--answer-note-border);
   --color-answer-inset: var(--answer-inset);
@@ -698,5 +705,43 @@
     color: var(--answer-marker-fg);
     font-size: 0.8125rem;
     line-height: 1;
+  }
+}
+
+/* =========================================================================
+   Figma 이펙트 유틸리티
+   ========================================================================= */
+/* header / footer background — 캔버스색이 번지는 페이드 (Figma header background: 42% → 83% @65% → 0) */
+@utility canvas-fade-down {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--background-canvas-fade-solid) 42%, transparent) 0%,
+    color-mix(in srgb, var(--background-canvas-fade-solid) 83%, transparent) 65%,
+    transparent 100%
+  );
+}
+
+/* Figma loader-text shimmer — 로딩 문구 위를 밝은 띠가 지나간다 (#8C8C94 → #FAFAFC → #8C8C94) */
+@utility text-shimmer {
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    #8c8c94 0%,
+    #8c8c94 31%,
+    #fafafc 51%,
+    #8c8c94 68%,
+    #8c8c94 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: riido-shimmer 2s linear infinite;
+}
+@keyframes riido-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }

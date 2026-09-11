@@ -9,12 +9,17 @@ type HeaderProps = {
 };
 
 /**
- * Figma `header` (962:7519) — 64px.
- * 좌: 대화 제목(Title/20 Medium, 220px 말줄임) / 중앙: 채팅 검색(392px) / 우: 이용가이드(book-open)
+ * Figma `header` (962:7519) — 64px, pad 20/12/20/32.
+ * 좌: 대화 제목(Title/20 Medium, 220px 말줄임) / 중앙: 채팅 검색(392×40) / 우: 이용가이드(book-open 40, hover: surface-strong)
+ * 배경: 캔버스색이 아래로 번지는 80px 페이드(header background) — 메시지가 헤더 밑으로 스크롤될 때 가려준다.
  */
 export function Header({ title }: HeaderProps) {
   return (
-    <header className="relative flex h-16 shrink-0 items-center gap-3 pr-3 pl-8">
+    <header className="relative z-10 flex h-16 shrink-0 items-center gap-3 pr-3 pl-8">
+      <div
+        className="canvas-fade-down pointer-events-none absolute inset-x-0 top-0 h-20"
+        aria-hidden
+      />
       <h1
         className={cn(
           'text-text-primary text-title-20 w-[220px] shrink-0 truncate font-medium tracking-tight',
@@ -26,7 +31,7 @@ export function Header({ title }: HeaderProps) {
 
       {/* TODO: 채팅 검색 — 검색 API 붙기 전까지 입력만 받는다 */}
       <div className="absolute top-1/2 left-1/2 w-[392px] -translate-x-1/2 -translate-y-1/2">
-        <label className="bg-background-surface-soft border-border-strong rounded-12 flex items-center gap-2 border px-4 py-2.5">
+        <label className="bg-background-surface-soft border-border-strong rounded-12 flex h-10 items-center gap-2 border px-4">
           <Search className="text-icon-primary size-5 shrink-0" strokeWidth={ICON_STROKE} />
           <input
             type="search"

@@ -9,8 +9,8 @@ type SwitchProps = {
 };
 
 /**
- * Figma `switch` (706:93) — 36×20 토글.
- * 설정/알림 항목의 On·Off 전환에 쓴다.
+ * Figma `switch` (2132:11308) — 36×20 토글, pad 2, thumb 16.
+ * off: fill-surface-strong(#E8EBED / #272F35) / on: button-primary(#24B2A4 / #29D6C5), thumb는 button-surface(#F9FAFB / #1F262B)
  */
 export function Switch({
   checked,
@@ -31,14 +31,14 @@ export function Switch({
         'relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors outline-none',
         'focus-visible:ring-ring/50 focus-visible:ring-3',
         'disabled:cursor-not-allowed disabled:opacity-50',
-        checked ? 'bg-primary-solid' : 'bg-border-strong',
+        checked ? 'bg-button-primary' : 'bg-fill-surface-strong',
         className,
       )}
     >
       <span
         aria-hidden
         className={cn(
-          'bg-gray-0 shadow-s size-4 rounded-full transition-transform',
+          'bg-button-surface size-4 rounded-full transition-transform',
           checked ? 'translate-x-4' : 'translate-x-0',
         )}
       />

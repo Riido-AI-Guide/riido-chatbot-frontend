@@ -53,6 +53,8 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+  /** 같은 질문을 다시 보낸 횟수. Figma 네트워크 에러 흐름(최대 3회) 표시에 쓴다. */
+  const [retryCount, setRetryCount] = useState(0);
 
   /** 답변 대기든 대화 로딩이든, 새 요청을 막아야 하는 상태 */
   const isBusy = status === 'sending' || status === 'loading';
@@ -80,6 +82,7 @@ export function useChat() {
         setMessages(conversation.messages.map(toChatMessage));
 
         pendingQueryRef.current = null;
+        setRetryCount(0);
         setStatus('idle');
       } catch (caught) {
         // 낙관적으로 붙여 둔 사용자 메시지는 그대로 두고 재전송할 수 있게 한다.
@@ -110,6 +113,7 @@ export function useChat() {
 
       setMessages((previous) => [...previous, optimistic]);
       pendingQueryRef.current = query;
+      setRetryCount(0);
 
       void requestReply(query);
     },
@@ -123,6 +127,7 @@ export function useChat() {
       return;
     }
 
+    setRetryCount((count) => count + 1);
     void requestReply(query);
   }, [requestReply, isBusy]);
 
@@ -157,6 +162,7 @@ export function useChat() {
     setTitle(null);
     setMessages([]);
     setError(null);
+    setRetryCount(0);
     setStatus('idle');
   }, []);
 
@@ -168,6 +174,9 @@ export function useChat() {
     error,
     /** 답변 대기 중. 타이핑 인디케이터 표시 여부에 쓴다. */
     isSending: status === 'sending',
+    /** 실패한 질문을 다시 보내는 중 (Figma network-connection-retry-loading) */
+    isRetrying: status === 'sending' && retryCount > 0,
+    retryCount,
     /** 답변 대기 + 대화 로딩. 입력·버튼 잠금에 쓴다. */
     isBusy,
     send,

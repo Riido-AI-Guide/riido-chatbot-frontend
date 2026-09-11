@@ -14,7 +14,7 @@ type FeatureCardProps = {
  */
 export function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
-    <div className="bg-fill-question-preview border-border-disable rounded-16 flex items-start gap-3 border p-4">
+    <div className="bg-fill-question-preview border-border-disable rounded-16 flex h-20 items-start gap-3 border px-4 py-[15px]">
       <span
         className="bg-primary-soft rounded-12 flex size-10 shrink-0 items-center justify-center"
         aria-hidden

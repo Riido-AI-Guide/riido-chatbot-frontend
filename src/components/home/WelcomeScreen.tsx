@@ -44,11 +44,8 @@ export function WelcomeScreen() {
             이용가이드를 바탕으로 빠르고 정확하게 답변해드릴게요!
           </p>
         </div>
-        {/* TODO: 디자이너 일러스트/이미지 받으면 교체 (392×344) */}
-        <div
-          className="bg-background-surface-strong rounded-16 h-[344px] w-[392px] shrink-0"
-          aria-hidden
-        />
+        {/* Figma shape 392×344 (surface-strong, 라운드 없음) — 디자인에도 회색 플레이스홀더 */}
+        <div className="bg-background-surface-strong h-[344px] w-[392px] shrink-0" aria-hidden />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

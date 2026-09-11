@@ -6,10 +6,10 @@ type AnswerShellProps = {
   children: ReactNode;
 };
 
-/** 답변 전체를 감싸는 흰 카드 (Figma answer-1: 800px, border-disable, radius 16) */
+/** 답변 전체를 감싸는 카드 (Figma answer-1: 800px, fill-neutral-strong + border-strong, radius 16, pad 24/16/8/16) */
 export function AnswerShell({ children }: AnswerShellProps) {
   return (
-    <div className="bg-answer-shell border-answer-shell-border rounded-16 w-full border px-4 pt-6 pb-2">
+    <div className="bg-answer-shell border-answer-shell-border rounded-16 w-full border px-[15px] pt-6 pb-2">
       <div className="flex w-full flex-col gap-2">
         <div className="flex w-full flex-col gap-3">{children}</div>
         <AnswerFooter />

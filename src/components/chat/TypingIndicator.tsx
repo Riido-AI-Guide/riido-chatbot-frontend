@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Leapfrog } from 'ldrs/react';
-import 'ldrs/react/Leapfrog.css';
 
 /** 이 시간이 지나도 답이 없으면 안내 문구를 바꾼다 (Figma 코멘트 #57) */
 const DELAY_NOTICE_MS = 8000;
 
 /**
- * Figma `chat-light-loading` — 48px 프로필 + 회색 pill 안에 로딩 문구.
- * 로더: ldrs Leapfrog (디자이너 지정). size/speed는 기본값, 색은 icon-secondary 토큰
+ * Figma `chat-light-loading` › ai-message › answer-thinking
+ * 48px 프로필(icon-tertiary) + gap 8 + 56px pill(fill-neutral-strong, border-strong, radius 20, pad 16/24)
+ * 문구는 Body/16 위로 밝은 띠가 지나가는 shimmer (loader-text shimmer).
+ * 점 로더(Leapfrog)는 여기 말고 입력창 위에 따로 뜬다 → <AnswerLoader />
  */
 export function TypingIndicator() {
   const [isDelayed, setIsDelayed] = useState(false);
@@ -20,18 +20,18 @@ export function TypingIndicator() {
   return (
     <div className="flex items-start gap-2" role="status" aria-live="polite">
       <span
-        className="bg-background-surface-strong rounded-12 size-12 shrink-0"
+        className="bg-icon-tertiary rounded-12 size-12 shrink-0"
         aria-hidden
         data-name="chat-profile"
       />
-      <div className="bg-fill-neutral rounded-16 flex h-12 items-center gap-3 px-6">
-        <span className="text-text-secondary text-body-14">
+      <div
+        className="bg-fill-neutral-strong border-border-strong flex h-14 items-center rounded-[20px] border px-6 py-4"
+        data-name="answer-thinking"
+      >
+        <span className="text-shimmer text-body-16">
           {isDelayed
             ? '자료를 찾아 정리하느라 조금 더 걸리고 있어요…'
             : '이용 가이드 문서를 읽고 있습니다…'}
-        </span>
-        <span className="flex items-center" aria-hidden>
-          <Leapfrog size="24" speed="2.5" color="var(--icon-secondary)" />
         </span>
       </div>
     </div>
