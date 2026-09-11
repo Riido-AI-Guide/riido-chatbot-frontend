@@ -1,4 +1,4 @@
-import chatbotProfile from '@/assets/brand/chatbot-profile.png';
+import { ChatProfile } from '@/components/chat/ChatProfile';
 import { Markdown } from '@/components/chat/Markdown';
 import type { FeedbackRating, FeedbackReasonCode } from '@/api/feedback';
 import { AnswerBody } from '@/components/chat/answer/AnswerBody';
@@ -85,12 +85,7 @@ export function MessageBubble({ message, actions }: MessageBubbleProps) {
   return (
     <MessageActionsProvider value={messageActions}>
       <div className="flex items-start gap-2">
-        <img
-          src={chatbotProfile}
-          alt=""
-          className="size-12 shrink-0 object-contain"
-          data-name="chat-profile"
-        />
+        <ChatProfile />
         <div className="min-w-0 flex-1">
           {hasSections ? (
             // 구조화된 답변은 AnswerShell이 카드까지 그린다.

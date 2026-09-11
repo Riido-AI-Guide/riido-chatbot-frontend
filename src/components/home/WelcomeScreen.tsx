@@ -33,7 +33,7 @@ export function WelcomeScreen() {
   return (
     <div className="mx-auto flex w-full max-w-[800px] flex-col gap-14 pt-8">
       <div className="flex items-start justify-between gap-6">
-        <div className="text-text-strong flex w-[364px] shrink-0 flex-col gap-5 pt-12">
+        <div className="text-text-strong flex w-[364px] shrink-0 flex-col gap-5 pt-[70px]">
           <h2 className="text-welcome font-semibold tracking-tight">
             안녕하세요,
             <br />
@@ -45,13 +45,22 @@ export function WelcomeScreen() {
             이용가이드를 바탕으로 빠르고 정확하게 답변해드릴게요!
           </p>
         </div>
-        {/* Figma shape 392×344 자리 — 디자이너 캐릭터(welcome.png, 투명 배경) */}
-        <img
-          src={welcomeCharacter}
-          alt=""
-          className="h-[344px] w-[392px] shrink-0 object-contain"
+        {/* Figma group `character` 392×344 — 바닥 그림자 3겹(블러 타원) 위에 캐릭터 이미지.
+            이미지는 346×346으로 (28, -33)에 놓고 위쪽을 잘라낸다 (imageTransform 1.132/0.994, offset -0.080/0.095) */}
+        <div
+          className="relative h-[344px] w-[392px] shrink-0 overflow-hidden"
+          aria-hidden
           data-name="welcome-character"
-        />
+        >
+          <span className="absolute top-[256px] left-[135px] h-10 w-[191px] rounded-full bg-[#181d21]/22 blur-[20px]" />
+          <span className="absolute top-[263px] left-[126px] h-[26px] w-[172px] rounded-full bg-[#181d21]/36 blur-[12px]" />
+          <span className="absolute top-[262px] left-[223px] h-[22px] w-[46px] rounded-full bg-[#181d21] blur-[8px]" />
+          <img
+            src={welcomeCharacter}
+            alt=""
+            className="absolute top-[-33px] left-[28px] h-[346px] w-[346px] max-w-none"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
