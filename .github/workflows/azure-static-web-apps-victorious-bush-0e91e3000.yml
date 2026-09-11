@@ -27,7 +27,7 @@ jobs:
       - name: Get Id Token
         uses: actions/github-script@v6
         env:
-          VITE_API_URL: https://rag-backend.orangewave-6d7af0a9.koreacentral.azurecontainerapps.io
+          VITE_API_BASE_URL: https://rag-backend.orangewave-6d7af0a9.koreacentral.azurecontainerapps.io
         id: idtoken
         with:
            script: |
