@@ -1,5 +1,6 @@
 import { FolderSearch, Layers, MessageCircleMore, Waypoints } from 'lucide-react';
 
+import welcomeCharacter from '@/assets/brand/welcome-character.png';
 import { FeatureCard } from '@/components/home/FeatureCard';
 
 const FEATURES = [
@@ -44,8 +45,13 @@ export function WelcomeScreen() {
             이용가이드를 바탕으로 빠르고 정확하게 답변해드릴게요!
           </p>
         </div>
-        {/* Figma shape 392×344 (surface-strong, 라운드 없음) — 디자인에도 회색 플레이스홀더 */}
-        <div className="bg-background-surface-strong h-[344px] w-[392px] shrink-0" aria-hidden />
+        {/* Figma shape 392×344 자리 — 디자이너 캐릭터(welcome.png, 투명 배경) */}
+        <img
+          src={welcomeCharacter}
+          alt=""
+          className="h-[344px] w-[392px] shrink-0 object-contain"
+          data-name="welcome-character"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

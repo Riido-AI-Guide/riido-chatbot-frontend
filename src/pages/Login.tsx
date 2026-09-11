@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import loginDark from '@/assets/brand/login-dark.jpg';
+import loginLight from '@/assets/brand/login-light.jpg';
 import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { toUserMessage } from '@/api/client';
 import { loginUser } from '@/api/users';
 import { saveCurrentUser } from '@/lib/auth';
+import { useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 /**
@@ -16,6 +19,7 @@ import { cn } from '@/lib/utils';
  */
 export default function Login() {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,10 +51,12 @@ export default function Login() {
         className="bg-background-surface border-border-default rounded-24 flex w-full max-w-[664px] items-center justify-between gap-2.5 border py-2.5 pr-10 pl-2.5 shadow-[0_16px_35px_rgba(0,0,0,0.06),0_64px_64px_rgba(0,0,0,0.05)]"
         data-name="login-card"
       >
-        {/* Figma Rectangle 1 — 일러스트 자리(디자인에도 회색 플레이스홀더) */}
-        <div
-          className="bg-fill-neutral-strong rounded-16 hidden h-[338px] w-[307px] shrink-0 md:block"
-          aria-hidden
+        {/* Figma Rectangle 1 (307×338, radius 16) — 디자이너 캐릭터 일러스트, 라이트/다크 별도 이미지 */}
+        <img
+          src={isDark ? loginDark : loginLight}
+          alt=""
+          className="bg-fill-neutral-strong rounded-16 hidden h-[338px] w-[307px] shrink-0 object-cover md:block"
+          data-name="login-illustration"
         />
 
         <form

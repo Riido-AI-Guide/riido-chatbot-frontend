@@ -35,7 +35,11 @@ export default function Home() {
     retry,
     reset,
     loadConversation,
+    toggleBookmark,
+    rateMessage,
+    clearRating,
   } = useChat();
+  const [searchQuery, setSearchQuery] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -62,11 +66,16 @@ export default function Home() {
           onSelect={loadConversation}
           onNewChat={reset}
           onCollapse={() => setIsSidebarCollapsed(true)}
+          filter={searchQuery}
         />
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Header title={isEmpty ? null : title} />
+        <Header
+          title={isEmpty ? null : title}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
 
         <main className="relative min-h-0 flex-1 overflow-y-auto">
           {/* Figma question-list-bar — 채팅 영역 우측 상단(top 32, right 20)에 붙어 따라다닌다 */}
@@ -95,7 +104,14 @@ export default function Home() {
                       index === 0 ? undefined : message.role === 'user' ? 'mt-[72px]' : 'mt-12'
                     }
                   >
-                    <MessageBubble message={message} />
+                    <MessageBubble
+                      message={message}
+                      actions={{
+                        onToggleBookmark: toggleBookmark,
+                        onRate: rateMessage,
+                        onClearRating: clearRating,
+                      }}
+                    />
                   </div>
                 ))}
               </div>

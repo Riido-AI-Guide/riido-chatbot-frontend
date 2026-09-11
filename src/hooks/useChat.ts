@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
+import { addBookmark, removeBookmark } from '@/api/bookmarks';
 import { toUserMessage } from '@/api/client';
 import {
   appendMessage,
@@ -11,11 +12,21 @@ import {
   type Message,
   type Role,
 } from '@/api/conversations';
+import {
+  deleteFeedback,
+  saveFeedback,
+  type FeedbackRating,
+  type FeedbackReasonCode,
+  type MessageFeedback,
+} from '@/api/feedback';
+import { emitBookmarksChanged } from '@/lib/bookmark-events';
 
 /** 화면에 그리는 메시지. 서버 메시지와 낙관적으로 추가한 메시지를 같은 모양으로 다룬다. */
 export type ChatMessage = {
   /** React key. 서버 메시지는 'server-{id}', 낙관적 메시지는 'local-{n}' */
   key: string;
+  /** 서버 메시지 id. 낙관적 메시지(아직 서버에 없음)는 null */
+  id: number | null;
   role: Role;
   /** sections가 비어 있을 때 대신 그리는 평문(마크다운) */
   content: string;
@@ -25,6 +36,10 @@ export type ChatMessage = {
   answerType: AnswerType | null;
   /** 구조화된 답변. 비어 있으면 content로 fallback */
   sections: AnswerSection[];
+  /** 담아 둔(북마크한) 답변인지 */
+  bookmarked: boolean;
+  /** 남긴 평가. 없으면 null */
+  feedback: MessageFeedback | null;
   /** UTC ISO-8601 문자열 */
   createdAt: string;
 };
@@ -38,11 +53,14 @@ export type ChatStatus = 'idle' | 'sending' | 'loading' | 'error';
 function toChatMessage(message: Message): ChatMessage {
   return {
     key: `server-${message.id}`,
+    id: message.id,
     role: message.role,
     content: message.content,
     title: message.title ?? null,
     answerType: message.answerType ?? null,
     sections: message.sections ?? [],
+    bookmarked: message.bookmarked ?? false,
+    feedback: message.feedback ?? null,
     createdAt: message.createdAt,
   };
 }
@@ -103,11 +121,14 @@ export function useChat() {
       localIdRef.current += 1;
       const optimistic: ChatMessage = {
         key: `local-${localIdRef.current}`,
+        id: null,
         role: 'user',
         content: query,
         title: null,
         answerType: null,
         sections: [],
+        bookmarked: false,
+        feedback: null,
         createdAt: new Date().toISOString(),
       };
 
@@ -156,6 +177,54 @@ export function useChat() {
     [isBusy],
   );
 
+  /** 메시지 하나의 필드만 바꾼다 (북마크·평가 낙관적 갱신용) */
+  const patchMessage = useCallback((messageId: number, patch: Partial<ChatMessage>) => {
+    setMessages((previous) =>
+      previous.map((message) => (message.id === messageId ? { ...message, ...patch } : message)),
+    );
+  }, []);
+
+  /** 답변 담기 토글. 실패하면 원래 상태로 되돌리고 에러를 던진다. */
+  const toggleBookmark = useCallback(
+    async (messageId: number, bookmarked: boolean) => {
+      patchMessage(messageId, { bookmarked });
+      try {
+        if (bookmarked) {
+          await addBookmark(messageId);
+        } else {
+          await removeBookmark(messageId);
+        }
+        emitBookmarksChanged();
+      } catch (caught) {
+        patchMessage(messageId, { bookmarked: !bookmarked });
+        throw caught;
+      }
+    },
+    [patchMessage],
+  );
+
+  /**
+   * 좋아요/싫어요 저장. 처음 누를 땐 reason 없이, 상세사유를 고르면 같은 rating에 reason을 실어 다시 보낸다.
+   * 응답이 곧 서버 상태라 그대로 메시지에 덮어쓴다.
+   */
+  const rateMessage = useCallback(
+    async (messageId: number, rating: FeedbackRating, reason: FeedbackReasonCode | null = null) => {
+      const saved = await saveFeedback(messageId, { rating, reason });
+      patchMessage(messageId, { feedback: saved });
+      return saved;
+    },
+    [patchMessage],
+  );
+
+  /** 평가 취소 */
+  const clearRating = useCallback(
+    async (messageId: number) => {
+      await deleteFeedback(messageId);
+      patchMessage(messageId, { feedback: null });
+    },
+    [patchMessage],
+  );
+
   const reset = useCallback(() => {
     pendingQueryRef.current = null;
     setConversationId(null);
@@ -183,5 +252,8 @@ export function useChat() {
     retry,
     reset,
     loadConversation,
+    toggleBookmark,
+    rateMessage,
+    clearRating,
   };
 }

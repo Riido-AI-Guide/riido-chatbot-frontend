@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import chatbotProfile from '@/assets/brand/chatbot-profile.png';
+
 /** 이 시간이 지나도 답이 없으면 안내 문구를 바꾼다 (Figma 코멘트 #57) */
 const DELAY_NOTICE_MS = 8000;
 
@@ -19,9 +21,10 @@ export function TypingIndicator() {
 
   return (
     <div className="flex items-start gap-2" role="status" aria-live="polite">
-      <span
-        className="bg-icon-tertiary rounded-12 size-12 shrink-0"
-        aria-hidden
+      <img
+        src={chatbotProfile}
+        alt=""
+        className="size-12 shrink-0 object-contain"
         data-name="chat-profile"
       />
       <div

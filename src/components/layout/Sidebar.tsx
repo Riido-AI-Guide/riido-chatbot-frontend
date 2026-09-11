@@ -1,5 +1,6 @@
 import {
   Archive,
+  Bookmark as BookmarkIcon,
   ChevronDown,
   MessageCircleMore,
   MessagesSquare,
@@ -10,6 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { fetchBookmarks, removeBookmark, type Bookmark } from '@/api/bookmarks';
 import { fetchConversations, type ConversationSummary } from '@/api/conversations';
 import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { SidebarItem } from '@/components/layout/SidebarItem';
@@ -21,6 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
+import { emitBookmarksChanged, subscribeBookmarksChanged } from '@/lib/bookmark-events';
 import { ICON_STROKE } from '@/lib/icon';
 import { useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
@@ -34,15 +37,53 @@ type SidebarProps = {
   onNewChat: () => void;
   /** 사이드바 접기 (Figma sidebar-left 토글) */
   onCollapse: () => void;
+  /** 헤더 채팅 검색어 — 최근 대화를 제목으로 거른다 */
+  filter?: string;
 };
+
+/** Figma chevron toggle / archive·recent-chat — 섹션 접기/펼치기 버튼 */
+function SectionChevron({
+  isOpen,
+  label,
+  onToggle,
+}: {
+  isOpen: boolean;
+  label: string;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={isOpen ? `${label} 접기` : `${label} 펼치기`}
+      aria-expanded={isOpen}
+      className="rounded-6 focus-visible:ring-ring/50 flex size-8 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
+    >
+      <ChevronDown
+        className={cn('text-icon-secondary size-5 transition-transform', !isOpen && '-rotate-90')}
+        strokeWidth={ICON_STROKE}
+        aria-hidden
+      />
+    </button>
+  );
+}
 
 /**
  * Figma `sidebar` (entry-screen-sidebar-lg 기준, 260px)
  * 헤더(로고+토글) / 본문(새 채팅, 답변 보관, 최근 대화) / 푸터(문의, 설정, 프로필)
  */
-export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse }: SidebarProps) {
+export function Sidebar({
+  activeId,
+  refreshKey,
+  onSelect,
+  onNewChat,
+  onCollapse,
+  filter = '',
+}: SidebarProps) {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [isBookmarksOpen, setIsBookmarksOpen] = useState(false);
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const user = getCurrentUser();
@@ -57,6 +98,42 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
       .then(setConversations)
       .catch(() => setConversations([]));
   }, [userId, refreshKey]);
+
+  // 답변 보관 목록 — 처음 한 번 + 답변 카드에서 북마크가 바뀔 때마다 다시 불러온다
+  useEffect(() => {
+    if (userId === undefined) {
+      return;
+    }
+    const load = () => {
+      fetchBookmarks(userId)
+        .then(setBookmarks)
+        .catch(() => setBookmarks([]));
+    };
+    load();
+    return subscribeBookmarksChanged(load);
+  }, [userId]);
+
+  const handleRemoveBookmark = async (messageId: number) => {
+    setBookmarks((previous) => previous.filter((bookmark) => bookmark.message.id !== messageId));
+    try {
+      await removeBookmark(messageId);
+      emitBookmarksChanged();
+    } catch {
+      // 실패하면 목록을 다시 받아 원상복구
+      if (userId !== undefined) {
+        fetchBookmarks(userId)
+          .then(setBookmarks)
+          .catch(() => undefined);
+      }
+    }
+  };
+
+  const normalizedFilter = filter.trim().toLowerCase();
+  const visibleConversations = normalizedFilter
+    ? conversations.filter((conversation) =>
+        conversation.title.toLowerCase().includes(normalizedFilter),
+      )
+    : conversations;
 
   const initial = user?.name.trim().charAt(0).toUpperCase() ?? 'R';
 
@@ -83,30 +160,74 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
       {/* 본문 */}
       <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto py-3 pl-3">
         <SidebarItem icon={SquarePen} label="새 채팅" onClick={onNewChat} />
-        {/* TODO: 답변 보관(북마크) — 저장/조회 API 붙기 전까지 비활성 */}
-        <SidebarItem icon={Archive} label="답변 보관" disabled />
+        {/* Figma chat-storage-section-scroll — 답변 보관 (펼치면 sidebar-list-item-1 목록) */}
+        <SidebarItem
+          icon={Archive}
+          label="답변 보관"
+          onClick={() => setIsBookmarksOpen((open) => !open)}
+          trailing={
+            <SectionChevron
+              isOpen={isBookmarksOpen}
+              label="답변 보관"
+              onToggle={() => setIsBookmarksOpen((open) => !open)}
+            />
+          }
+        />
+        {isBookmarksOpen &&
+          (bookmarks.length === 0 ? (
+            <p className="text-text-tertiary text-body-14 px-4 py-2">담아 둔 답변이 없어요.</p>
+          ) : (
+            /* Figma list: 좌측 32 들여쓰기, 항목 = 1px 선(icon-tertiary) + gap 8 + 40px hover-background(pad 8, radius 12) */
+            <ul className="flex flex-col pr-3 pl-5">
+              {bookmarks.map((bookmark) => {
+                const label = bookmark.message.title || bookmark.conversationTitle;
+                return (
+                  <li
+                    key={bookmark.message.id}
+                    className="border-icon-tertiary flex items-center gap-2 border-l"
+                  >
+                    <div className="group/item hover:bg-fill-surface-strong focus-within:bg-fill-surface-strong rounded-12 flex h-10 min-w-0 flex-1 items-center pr-2">
+                      <button
+                        type="button"
+                        onClick={() => onSelect(bookmark.conversationId)}
+                        title={label}
+                        className="focus-visible:ring-ring/50 rounded-12 flex h-full min-w-0 flex-1 items-center px-2 text-left outline-none focus-visible:ring-3"
+                      >
+                        <span className="text-text-secondary text-body-16 min-w-0 flex-1 truncate">
+                          {label}
+                        </span>
+                      </button>
+                      {/* Figma sidebar-list-item-1 hover — 우측에 bookmark 아이콘, 누르면 보관 해제 */}
+                      <button
+                        type="button"
+                        aria-label="답변 보관 해제"
+                        title="답변 보관 해제"
+                        onClick={() => void handleRemoveBookmark(bookmark.message.id)}
+                        className="text-icon-primary focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center outline-none group-focus-within/item:flex group-hover/item:flex focus-visible:ring-3"
+                      >
+                        <BookmarkIcon
+                          className="size-6"
+                          strokeWidth={ICON_STROKE}
+                          fill="currentColor"
+                        />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ))}
 
         <SidebarItem
           icon={MessagesSquare}
           label="최근 대화"
           onClick={() => setIsRecentOpen((open) => !open)}
           trailing={
-            <button
-              type="button"
-              onClick={() => setIsRecentOpen((open) => !open)}
-              aria-label={isRecentOpen ? '최근 대화 접기' : '최근 대화 펼치기'}
-              aria-expanded={isRecentOpen}
-              className="rounded-6 focus-visible:ring-ring/50 flex size-8 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
-            >
-              <ChevronDown
-                className={cn(
-                  'text-icon-secondary size-5 transition-transform',
-                  !isRecentOpen && '-rotate-90',
-                )}
-                strokeWidth={ICON_STROKE}
-                aria-hidden
-              />
-            </button>
+            <SectionChevron
+              isOpen={isRecentOpen}
+              label="최근 대화"
+              onToggle={() => setIsRecentOpen((open) => !open)}
+            />
           }
         />
 
@@ -116,7 +237,7 @@ export function Sidebar({ activeId, refreshKey, onSelect, onNewChat, onCollapse 
           ) : (
             /* Figma sidebar-list-item-2: 40px, 좌측 1px 선 + gap 8 만큼 들여쓰기, pad 8, radius 12, hover: fill-surface-strong */
             <ul className="flex flex-col pr-3 pl-[9px]">
-              {conversations.map((conversation) => {
+              {visibleConversations.map((conversation) => {
                 const isActive = conversation.conversationId === activeId;
                 return (
                   <li key={conversation.conversationId}>

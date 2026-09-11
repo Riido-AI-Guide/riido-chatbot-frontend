@@ -6,6 +6,9 @@ import { cn } from '@/lib/utils';
 type HeaderProps = {
   /** 대화 제목. 새 대화(엔트리 화면)면 null → 제목 숨김 */
   title: string | null;
+  /** 채팅 검색어 — 검색 API가 없어서 지금은 사이드바 대화 목록을 제목으로 거른다 */
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 };
 
 /**
@@ -13,7 +16,7 @@ type HeaderProps = {
  * 좌: 대화 제목(Title/20 Medium, 220px 말줄임) / 중앙: 채팅 검색(392×40) / 우: 이용가이드(book-open 40, hover: surface-strong)
  * 배경: 캔버스색이 아래로 번지는 80px 페이드(header background) — 메시지가 헤더 밑으로 스크롤될 때 가려준다.
  */
-export function Header({ title }: HeaderProps) {
+export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
   return (
     <header className="relative z-10 flex h-16 shrink-0 items-center gap-3 pr-3 pl-8">
       <div
@@ -29,12 +32,14 @@ export function Header({ title }: HeaderProps) {
         {title ?? '새 대화'}
       </h1>
 
-      {/* TODO: 채팅 검색 — 검색 API 붙기 전까지 입력만 받는다 */}
+      {/* 채팅 검색 — 검색 API 붙기 전까지는 사이드바 최근 대화를 제목으로 거른다 */}
       <div className="absolute top-1/2 left-1/2 w-[392px] -translate-x-1/2 -translate-y-1/2">
         <label className="bg-background-surface-soft border-border-strong rounded-12 flex h-10 items-center gap-2 border px-4">
           <Search className="text-icon-primary size-5 shrink-0" strokeWidth={ICON_STROKE} />
           <input
             type="search"
+            value={searchQuery}
+            onChange={(event) => onSearchChange(event.target.value)}
             placeholder="채팅 검색"
             aria-label="채팅 검색"
             className="text-text-primary placeholder:text-text-tertiary text-body-14 w-full bg-transparent outline-none"
