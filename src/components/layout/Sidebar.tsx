@@ -138,7 +138,7 @@ export function Sidebar({
   const initial = user?.name.trim().charAt(0).toUpperCase() ?? 'R';
 
   return (
-    <aside className="bg-fill-neutral-strong border-border-strong flex h-full w-[260px] shrink-0 flex-col border-r">
+    <aside className="bg-fill-neutral-strong flex h-full w-[260px] shrink-0 flex-col shadow-[inset_-1px_0_0_var(--border-strong)]">
       {/* 헤더: 로고 + 서비스명 + 접기 토글 */}
       <div className="flex shrink-0 items-center gap-4 p-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -269,7 +269,7 @@ export function Sidebar({
         </div>
 
         <div className="border-border-strong border-t">
-          <p className="text-text-primary text-title-16 px-5 pt-4 pb-2 font-medium tracking-[-0.4px]">
+          <p className="text-text-primary text-title-16 px-5 pt-[15px] pb-2 font-medium tracking-[-0.4px]">
             설정
           </p>
           <div className="pl-3">
@@ -284,7 +284,7 @@ export function Sidebar({
         </div>
 
         {/* Figma sidebar-footer-profile — 프로필 줄. 로그아웃은 Figma에 없어서 누르면 뜨는 메뉴에 넣는다 */}
-        <div className="border-border-strong border-t p-3">
+        <div className="border-border-strong border-t px-3 pt-[11px] pb-3">
           <DropdownMenu>
             <DropdownMenuTrigger
               className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex w-full items-center gap-2 text-left outline-none focus-visible:ring-3"

@@ -76,7 +76,7 @@ const components: Components = {
  */
 const answerComponents: Components = {
   ...components,
-  p: ({ children }) => <p className="my-2 leading-[1.6] first:mt-0 last:mb-0">{children}</p>,
+  p: ({ children }) => <p className="my-2 leading-7 first:mt-0 last:mb-0">{children}</p>,
   ul: ({ children }) => <ul>{children}</ul>,
   ol: ({ children }) => <ol>{children}</ol>,
   li: ({ children }) => <li>{children}</li>,
@@ -96,7 +96,7 @@ export function Markdown({ content, variant = 'chat', className }: MarkdownProps
     <div
       className={cn(
         'break-words',
-        isAnswer ? 'answer-prose text-base leading-[1.6]' : 'text-sm',
+        isAnswer ? 'answer-prose text-body-16-reading' : 'text-sm',
         className,
       )}
     >

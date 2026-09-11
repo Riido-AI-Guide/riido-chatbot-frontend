@@ -68,7 +68,7 @@ export function SidebarRail({ onNewChat, onExpand }: SidebarRailProps) {
   const initial = user?.name.trim().charAt(0).toUpperCase() ?? 'R';
 
   return (
-    <aside className="bg-fill-neutral-strong border-border-strong flex h-full w-16 shrink-0 flex-col items-center border-r">
+    <aside className="bg-fill-neutral-strong flex h-full w-16 shrink-0 flex-col items-center shadow-[inset_-1px_0_0_var(--border-strong)]">
       {/* 로고 자리 — 마우스 올리면 펼치기 아이콘으로 바뀐다 (Prototype State sm-header-logo/toggle-visible) */}
       <div className="flex h-16 shrink-0 items-center justify-center">
         <button
@@ -128,30 +128,33 @@ export function SidebarRail({ onNewChat, onExpand }: SidebarRailProps) {
       </div>
 
       {/* Figma sidebar-small-avatar-wrapper — border-top + pad 12 */}
-      <div className="border-border-strong flex w-full items-center justify-center border-t p-3">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            aria-label="프로필 메뉴"
-            className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex size-10 items-center justify-center outline-none focus-visible:ring-3"
-          >
-            <span
-              className="bg-background-surface-strong text-text-secondary text-title-16 flex size-8 items-center justify-center rounded-full font-medium tracking-[-0.4px]"
-              aria-hidden
+      <div className="border-border-strong flex w-full items-center justify-center border-t px-3 pt-[11px] pb-3">
+        {/* Figma avatar-placeholder 40×42 (pad 1/0) */}
+        <div className="flex h-[42px] items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label="프로필 메뉴"
+              className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex size-10 items-center justify-center outline-none focus-visible:ring-3"
             >
-              {initial}
-            </span>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="end" className="w-[236px]">
-            <DropdownMenuItem
-              onClick={() => {
-                clearCurrentUser();
-                navigate('/login', { replace: true });
-              }}
-            >
-              로그아웃
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <span
+                className="bg-background-surface-strong text-text-secondary text-title-16 flex size-8 items-center justify-center rounded-full font-medium tracking-[-0.4px]"
+                aria-hidden
+              >
+                {initial}
+              </span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="right" align="end" className="w-[236px]">
+              <DropdownMenuItem
+                onClick={() => {
+                  clearCurrentUser();
+                  navigate('/login', { replace: true });
+                }}
+              >
+                로그아웃
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </aside>
   );

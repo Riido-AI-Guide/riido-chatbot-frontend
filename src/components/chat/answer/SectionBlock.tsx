@@ -50,7 +50,7 @@ export function SectionBlock({ section, bodyBox, asChips, className }: SectionBl
     <Markdown
       content={section.text}
       variant="answer"
-      className={cn('min-w-0', isHeadline && 'font-medium')}
+      className={cn('min-w-0', isHeadline && 'font-medium tracking-[-0.4px] [&_p]:leading-6')}
     />
   );
 

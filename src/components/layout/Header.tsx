@@ -33,9 +33,10 @@ export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
       </h1>
 
       {/* 채팅 검색 — 검색 API 붙기 전까지는 사이드바 최근 대화를 제목으로 거른다 */}
-      <div className="absolute top-1/2 left-1/2 w-[392px] -translate-x-1/2 -translate-y-1/2">
-        <label className="bg-background-surface-soft border-border-strong rounded-12 flex h-10 items-center gap-2 border px-4">
-          <Search className="text-icon-primary size-5 shrink-0" strokeWidth={ICON_STROKE} />
+      {/* Figma: 스크롤바(12px) 뺀 영역 기준 중앙 → 6px 왼쪽 */}
+      <div className="absolute top-1/2 left-[calc(50%-6px)] w-[392px] -translate-x-1/2 -translate-y-1/2">
+        <label className="bg-background-surface-soft border-border-strong rounded-12 flex h-10 items-center gap-2 border px-[15px]">
+          <Search className="text-icon-tertiary size-5 shrink-0" strokeWidth={ICON_STROKE} />
           <input
             type="search"
             value={searchQuery}
@@ -54,7 +55,7 @@ export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
         aria-label="뤼이도 이용가이드 열기"
         className="hover:bg-fill-hover focus-visible:ring-ring/50 rounded-12 ml-auto flex size-10 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
       >
-        <BookOpen className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
+        <BookOpen className="text-icon-tertiary size-6" strokeWidth={ICON_STROKE} />
       </a>
     </header>
   );

@@ -17,7 +17,7 @@ type ErrorNoticeProps = {
 };
 
 const BOX =
-  'bg-status-danger-soft border-status-danger-border text-status-danger-text w-full rounded-16 border px-5 py-4';
+  'bg-status-danger-soft border-status-danger-border text-status-danger-text w-full rounded-16 border px-[19px] py-[15px]';
 
 /**
  * Figma `network-connection-error` / `network-connection-retry-loading` / `network-connection-failed-3times`
@@ -56,6 +56,7 @@ export function ErrorNotice({
 
   return (
     <div role="alert" className={`${BOX} flex items-center gap-2`}>
+      {/* Figma messages: 아이콘 20 + gap 16 + contents(fill) / 버튼은 우측 끝 */}
       <div className="flex min-w-0 flex-1 items-start gap-4">
         <span className="flex h-6 w-5 shrink-0 items-center justify-center" aria-hidden>
           <TriangleAlert className="text-status-danger-icon size-5" strokeWidth={ICON_STROKE} />

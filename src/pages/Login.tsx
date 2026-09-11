@@ -46,9 +46,10 @@ export default function Login() {
   }
 
   return (
-    <div className="bg-background-canvas-strong flex h-screen items-center justify-center px-4">
+    // Figma log in: 카드가 화면 세로 중앙보다 21px 위 (y 312) → 아래 pad 42
+    <div className="bg-background-canvas-strong flex h-screen items-center justify-center px-4 pb-[42px]">
       <div
-        className="bg-background-surface border-border-default rounded-24 flex w-full max-w-[664px] items-center justify-between gap-2.5 border py-2.5 pr-10 pl-2.5 shadow-[0_16px_35px_rgba(0,0,0,0.06),0_64px_64px_rgba(0,0,0,0.05)]"
+        className="bg-background-surface border-border-default rounded-24 flex w-full max-w-[664px] items-center justify-between gap-2.5 border py-[9px] pr-[39px] pl-[9px] shadow-[0_16px_35px_rgba(0,0,0,0.06),0_64px_64px_rgba(0,0,0,0.05)]"
         data-name="login-card"
       >
         {/* Figma Rectangle 1 (307×338, radius 16) — 디자이너 캐릭터 일러스트, 라이트/다크 별도 이미지 */}
@@ -65,9 +66,9 @@ export default function Login() {
           data-name="login-card-content"
         >
           <div className="flex w-full flex-col items-center gap-6">
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex w-full flex-col items-center gap-4">
               <img src={riidoSymbol} alt="Riido" className="size-12 shrink-0" />
-              <div className="flex flex-col gap-1 text-center">
+              <div className="flex w-full flex-col gap-1 text-center">
                 <h1 className="text-text-primary text-title-20 font-semibold tracking-[-0.4px]">
                   로그인
                 </h1>
@@ -103,7 +104,7 @@ export default function Login() {
               'rounded-16 text-body-16 flex h-12 w-full items-center justify-center px-4 py-3 font-medium tracking-[-0.4px] transition-colors outline-none',
               'focus-visible:ring-ring/50 focus-visible:ring-3',
               canSubmit
-                ? 'bg-primary-solid text-text-primary active:bg-primary-solid-strong'
+                ? 'bg-primary-solid text-text-primary active:bg-primary-solid-strong active:duration-100'
                 : 'bg-fill-disable text-text-disable cursor-not-allowed',
             )}
           >

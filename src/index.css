@@ -236,7 +236,8 @@
   --answer-inset-border: var(--border-neutral-strong);
   --answer-chip: var(--background-surface);
   --answer-chip-border: var(--border-strong);
-  --answer-marker: var(--icon-bullet-marker);
+  --answer-marker: var(--icon-bullet-marker); /* bullet-dot (#272F35 / #FFFFFF) */
+  --answer-step-badge: var(--fill-inverse); /* step-number-badge (#272F35 / #E8EBED) */
   --answer-marker-fg: var(--text-step-number);
   --answer-source: var(--text-secondary);
   --answer-source-ring: var(--icon-bullet-marker);
@@ -358,6 +359,10 @@
       --shadow-X → shadow-X
    ========================================================================= */
 @theme inline {
+  /* Figma 프로토타입: 모든 hover/press 상태 전환 = 300ms ease-out */
+  --default-transition-duration: 300ms;
+  --default-transition-timing-function: ease-out;
+
   /* Font */
   --font-sans:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -625,6 +630,7 @@
   --color-answer-chip: var(--answer-chip);
   --color-answer-chip-border: var(--answer-chip-border);
   --color-answer-marker: var(--answer-marker);
+  --color-answer-step-badge: var(--answer-step-badge);
   --color-answer-marker-fg: var(--answer-marker-fg);
   --color-answer-source: var(--answer-source);
   --color-answer-source-ring: var(--answer-source-ring);
@@ -666,11 +672,12 @@
     margin-bottom: 0;
   }
 
+  /* Figma bullet-item / step-item: Body/16 reading(16/28), gap 16, 들여쓰기 8 */
   .answer-prose li {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    line-height: 1.6;
+    line-height: 28px;
   }
 
   .answer-prose ul > li::before {
@@ -678,7 +685,7 @@
     flex: none;
     width: 6px;
     height: 6px;
-    margin-top: 0.55em;
+    margin-top: 11px; /* 28px 줄 가운데 */
     border-radius: 9999px;
     background: var(--answer-marker);
   }
@@ -699,9 +706,9 @@
     justify-content: center;
     width: 1.25rem;
     height: 1.25rem;
-    margin-top: 0.15em;
+    margin-top: 4px; /* Figma step-number: 20×28 안에 pad 4 */
     border-radius: 9999px;
-    background: var(--answer-marker);
+    background: var(--answer-step-badge);
     color: var(--answer-marker-fg);
     font-size: 0.8125rem;
     line-height: 1;
@@ -743,5 +750,26 @@
   }
   to {
     background-position: -200% 0;
+  }
+}
+
+/* Figma sidebar-scrollbar — 12px 트랙(pad 3) 안에 6px 둥근 thumb(icon-tertiary), 화살표 없음 */
+@utility riido-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--icon-tertiary) transparent;
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--icon-tertiary);
+    border-radius: 99px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
   }
 }

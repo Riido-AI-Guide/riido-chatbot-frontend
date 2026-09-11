@@ -65,7 +65,7 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
               : '질문이 구체적일수록 정확한 답변을 받을 수 있어요.'
           }
           className={cn(
-            'text-text-primary placeholder:text-text-tertiary text-body-16-reading field-sizing-content max-h-40 min-h-10 flex-1 resize-none self-center bg-transparent outline-none',
+            'text-text-primary placeholder:text-text-tertiary text-body-16-reading field-sizing-content max-h-40 min-h-7 flex-1 resize-none self-center bg-transparent outline-none',
             'disabled:cursor-not-allowed disabled:opacity-60',
           )}
         />
@@ -89,7 +89,7 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
               'focus-visible:ring-ring/50 focus-visible:ring-3',
               canSubmit
                 ? 'bg-button-inverse text-background-canvas'
-                : 'bg-fill-neutral text-icon-primary cursor-not-allowed',
+                : 'bg-fill-neutral text-icon-tertiary cursor-not-allowed',
             )}
           >
             <ArrowUp className="size-6" strokeWidth={ICON_STROKE} aria-hidden />

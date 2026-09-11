@@ -77,18 +77,18 @@ export default function Home() {
           onSearchChange={setSearchQuery}
         />
 
-        <main className="relative min-h-0 flex-1 overflow-y-auto">
-          {/* Figma question-list-bar — 채팅 영역 우측 상단(top 32, right 20)에 붙어 따라다닌다 */}
+        <main className="riido-scrollbar relative min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto">
+          {/* Figma question-list-bar — 채팅 영역(스크롤바 제외) 우측 상단(top 32, right 8)에 붙어 따라다닌다 */}
           {!isEmpty && (
             <div className="sticky top-8 z-10 h-0">
-              <QuestionListBar entries={questionEntries} className="absolute top-0 right-5" />
+              <QuestionListBar entries={questionEntries} className="absolute top-0 right-2" />
             </div>
           )}
-          {/* Figma: 엔트리 800 컬럼은 스크롤바(12) 뺀 영역 중앙, 채팅 856 컬럼은 좌 134 / 우 178(질문 바 자리) */}
+          {/* Figma: 스크롤바(12px) 뺀 1168 영역 기준 — 엔트리 800 컬럼은 중앙(184), 채팅 856 컬럼은 좌 134 / 우 178(질문 바 자리) */}
           <div
             className={cn(
               'mx-auto flex w-full flex-col pb-6',
-              isEmpty ? 'max-w-[812px] pr-3' : 'max-w-[912px] pr-14',
+              isEmpty ? 'max-w-[800px]' : 'max-w-[900px] pr-11',
             )}
           >
             {isEmpty ? (
@@ -127,7 +127,7 @@ export default function Home() {
           </div>
         </main>
 
-        <footer className="relative shrink-0 px-4 pt-2 pb-2">
+        <footer className="relative shrink-0 px-4 pt-2 pb-2.5">
           {/* Figma footer background — 위쪽으로 캔버스색이 번지는 페이드 (162px) */}
           <div
             className="from-background-canvas-fade-transparent via-background-canvas-fade-soft to-background-canvas-fade-solid pointer-events-none absolute inset-x-0 -top-16 bottom-0 bg-gradient-to-b"

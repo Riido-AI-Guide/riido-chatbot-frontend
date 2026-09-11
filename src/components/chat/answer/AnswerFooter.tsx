@@ -71,8 +71,10 @@ function ActionButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'text-icon-primary hover:bg-fill-surface-strong focus-visible:ring-ring/50 flex size-8 items-center justify-center rounded-[10px] transition-colors outline-none focus-visible:ring-3',
+        'hover:bg-fill-surface-strong focus-visible:ring-ring/50 flex size-8 items-center justify-center rounded-[10px] transition-colors outline-none focus-visible:ring-3',
         'disabled:cursor-not-allowed disabled:opacity-50',
+        // Figma: 기본 icon-tertiary, pressed는 icon-primary로 채움
+        pressed ? 'text-icon-primary' : 'text-icon-tertiary',
         className,
       )}
     >
@@ -186,7 +188,7 @@ export function AnswerFooter() {
         className="text-text-secondary hover:bg-fill-hover active:bg-fill-press focus-visible:ring-ring/50 rounded-12 text-body-16 flex h-10 shrink-0 items-center gap-1 pr-2.5 pl-4 transition-colors outline-none focus-visible:ring-3"
       >
         운영팀에 문의하기
-        <ArrowRight className="size-6" strokeWidth={ICON_STROKE} aria-hidden />
+        <ArrowRight className="size-6" strokeWidth={1.5} aria-hidden />
       </button>
     </div>
   );
