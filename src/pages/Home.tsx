@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { AnswerLoader } from '@/components/chat/AnswerLoader';
 import { ChatInput } from '@/components/chat/ChatInput';
+import { ContactDialogHost } from '@/components/contact/ContactDialog';
 import { ErrorNotice } from '@/components/chat/ErrorNotice';
 import { MessageBubble } from '@/components/chat/MessageBubble';
 import { QuestionListBar, type QuestionListEntry } from '@/components/chat/QuestionListBar';
@@ -57,6 +58,7 @@ export default function Home() {
 
   return (
     <div className="bg-background-canvas flex h-screen">
+      <ContactDialogHost />
       {isSidebarCollapsed ? (
         <SidebarRail onNewChat={reset} onExpand={() => setIsSidebarCollapsed(false)} />
       ) : (
@@ -87,8 +89,9 @@ export default function Home() {
           {/* Figma: 스크롤바(12px) 뺀 1168 영역 기준 — 엔트리 800 컬럼은 중앙(184), 채팅 856 컬럼은 좌 134 / 우 178(질문 바 자리) */}
           <div
             className={cn(
-              'mx-auto flex w-full flex-col pb-6',
-              isEmpty ? 'max-w-[800px]' : 'max-w-[900px] pr-11',
+              'mx-auto flex w-full flex-col',
+              // 채팅: 맨 아래로 내렸을 때 마지막 답변 카드 ↔ 입력창 72px (푸터 위 pad 8 + 64)
+              isEmpty ? 'max-w-[800px] pb-6' : 'max-w-[900px] pr-11 pb-16',
             )}
           >
             {isEmpty ? (

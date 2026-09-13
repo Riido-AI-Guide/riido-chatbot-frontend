@@ -14,6 +14,7 @@ import { FeedbackPopover } from '@/components/chat/answer/FeedbackPopover';
 import { useMessageActions } from '@/components/chat/answer/MessageActionsContext';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
 import { ICON_STROKE } from '@/lib/icon';
+import { openContactDialog } from '@/lib/contact-events';
 import { cn } from '@/lib/utils';
 
 /** 복사 완료 표시(check 아이콘) 유지 시간 */
@@ -48,6 +49,8 @@ type ActionButtonProps = {
   label: string;
   /** Figma state=pressed — 채운 아이콘 */
   pressed?: boolean;
+  /** 채우진 않고 색만 진하게 (복사 완료 check) */
+  active?: boolean;
   disabled?: boolean;
   onClick?: () => void;
   className?: string;
@@ -58,6 +61,7 @@ function ActionButton({
   icon: Icon,
   label,
   pressed = false,
+  active = false,
   disabled = false,
   onClick,
   className,
@@ -74,7 +78,7 @@ function ActionButton({
         'hover:bg-fill-surface-strong focus-visible:ring-ring/50 flex size-8 items-center justify-center rounded-[10px] transition-colors outline-none focus-visible:ring-3',
         'disabled:cursor-not-allowed disabled:opacity-50',
         // Figma: 기본 icon-tertiary, pressed는 icon-primary로 채움
-        pressed ? 'text-icon-primary' : 'text-icon-tertiary',
+        pressed || active ? 'text-icon-primary' : 'text-icon-tertiary',
         className,
       )}
     >
@@ -168,6 +172,7 @@ export function AnswerFooter() {
         <ActionButton
           icon={isCopied ? Check : Copy}
           label={isCopied ? '복사됨' : '답변 복사'}
+          active={isCopied}
           disabled={!actions}
           onClick={() => void handleCopy()}
         />
@@ -182,9 +187,9 @@ export function AnswerFooter() {
         {ratingButton('BAD', ThumbsDown, '싫어요')}
       </div>
 
-      {/* TODO: 운영팀 문의 폼 — 문의 API 붙기 전까지 자리만 */}
       <button
         type="button"
+        onClick={openContactDialog}
         className="text-text-secondary hover:bg-fill-hover active:bg-fill-press focus-visible:ring-ring/50 rounded-12 text-body-16 flex h-10 shrink-0 items-center gap-1 pr-2.5 pl-4 transition-colors outline-none focus-visible:ring-3"
       >
         운영팀에 문의하기

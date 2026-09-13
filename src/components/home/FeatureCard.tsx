@@ -1,16 +1,15 @@
-import type { LucideIcon } from 'lucide-react';
-
-import { ICON_STROKE } from '@/lib/icon';
+import type { ComponentType, SVGProps } from 'react';
 
 type FeatureCardProps = {
-  icon: LucideIcon;
+  /** 디자이너 riido 아이콘 (components/icons/riido) */
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
   title: string;
   description: string;
 };
 
 /**
  * Figma `feature-card-*` (2238:12564~) — 392px 카드.
- * 좌측 40×40 민트 soft 배경 아이콘 뱃지 + Title/18 + Body/14.
+ * 좌측 40×40 뱃지: primary-soft 배경 + riido 아이콘(stroke primary-border) + Title/18 + Body/14.
  */
 export function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
@@ -19,7 +18,7 @@ export function FeatureCard({ icon: Icon, title, description }: FeatureCardProps
         className="bg-primary-soft rounded-12 flex size-10 shrink-0 items-center justify-center"
         aria-hidden
       >
-        <Icon className="text-primary-border size-6" strokeWidth={ICON_STROKE} />
+        <Icon className="text-primary-border size-6" />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <p className="text-text-primary text-title-18 font-semibold tracking-tight">{title}</p>

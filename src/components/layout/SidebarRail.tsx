@@ -20,6 +20,7 @@ import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
 import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
+import { openContactDialog } from '@/lib/contact-events';
 import { ICON_STROKE } from '@/lib/icon';
 import { useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
@@ -99,8 +100,11 @@ export function SidebarRail({ onNewChat, onExpand }: SidebarRailProps) {
       </nav>
 
       <div className="flex flex-col items-center">
-        {/* TODO: 운영팀 문의 폼 — API 붙기 전까지 비활성 */}
-        <RailButton icon={MessageCircleMore} label="운영팀에 문의하기" disabled />
+        <RailButton
+          icon={MessageCircleMore}
+          label="운영팀에 문의하기"
+          onClick={openContactDialog}
+        />
 
         <Popover>
           <PopoverTrigger

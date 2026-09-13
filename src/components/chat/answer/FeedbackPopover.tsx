@@ -57,7 +57,7 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
       side="bottom"
       align="start"
       sideOffset={8}
-      className="bg-answer-card border-border-disable shadow-l rounded-16 w-[498px] max-w-[calc(100vw-32px)] border px-8 py-6"
+      className="bg-answer-card border-border-disable shadow-l w-[494px] max-w-[calc(100vw-32px)] rounded-[16px] border px-8 py-6"
     >
       <div className="flex flex-col items-end gap-6">
         <div className="flex w-full flex-col gap-3">
@@ -82,7 +82,12 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
             </span>
             <span className="text-text-secondary text-body-14">(선택사항)</span>
           </p>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="상세 사유">
+          {/* 3×2 (Figma). 서브픽셀 반올림으로 셋째 칩이 내려가지 않게 4px 여유 */}
+          <div
+            className="flex w-[calc(100%+4px)] flex-wrap gap-2"
+            role="radiogroup"
+            aria-label="상세 사유"
+          >
             {reasons.map((reason) => {
               const isChosen = reason.code === choice;
               return (
@@ -93,7 +98,7 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
                   aria-checked={isChosen}
                   onClick={() => setChoice(isChosen ? null : reason.code)}
                   className={cn(
-                    'border-border-strong text-text-primary hover:bg-fill-hover active:bg-fill-press focus-visible:ring-ring/50 rounded-12 text-body-16 h-10 border px-4 font-medium tracking-[0.4px] transition-colors outline-none focus-visible:ring-3',
+                    'border-border-strong text-text-primary hover:bg-fill-hover active:bg-fill-press focus-visible:ring-ring/50 rounded-12 text-body-16 h-10 border px-[15px] font-medium tracking-[0.4px] transition-colors outline-none focus-visible:ring-3',
                     isChosen ? 'bg-primary-soft border-primary-border' : 'bg-background-surface',
                   )}
                 >

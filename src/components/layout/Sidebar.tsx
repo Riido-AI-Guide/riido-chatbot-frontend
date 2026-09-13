@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
+import { openContactDialog } from '@/lib/contact-events';
 import { emitBookmarksChanged, subscribeBookmarksChanged } from '@/lib/bookmark-events';
 import { ICON_STROKE } from '@/lib/icon';
 import { useTheme } from '@/lib/theme';
@@ -264,8 +265,11 @@ export function Sidebar({
       {/* 푸터 */}
       <div className="flex shrink-0 flex-col">
         <div className="pl-3">
-          {/* TODO: 운영팀 문의 폼(이메일/유형/내용) — 문의 API 붙기 전까지 비활성 */}
-          <SidebarItem icon={MessageCircleMore} label="운영팀에 문의하기" disabled />
+          <SidebarItem
+            icon={MessageCircleMore}
+            label="운영팀에 문의하기"
+            onClick={openContactDialog}
+          />
         </div>
 
         <div className="border-border-strong border-t">

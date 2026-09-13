@@ -203,7 +203,7 @@
   --destructive: var(--status-danger-solid);
   --border: var(--border-neutral);
   --input: var(--border-neutral);
-  --ring: var(--primary-solid);
+  --ring: var(--border-strong); /* 포커스 링 — Figma엔 포커스 상태가 없어서 민트 대신 중립 회색 */
   --chart-1: var(--mint-500);
   --chart-2: var(--blue-500);
   --chart-3: var(--success-500);

@@ -2,6 +2,7 @@ import { Ring2 } from 'ldrs/react';
 import 'ldrs/react/Ring2.css';
 import { TriangleAlert } from 'lucide-react';
 
+import { openContactDialog } from '@/lib/contact-events';
 import { ICON_STROKE } from '@/lib/icon';
 
 /** Figma 네트워크 에러 흐름은 최대 3회 재시도 */
@@ -79,10 +80,9 @@ export function ErrorNotice({
           다시 시도
         </button>
         {isFailed && (
-          // TODO: 문제 신고 — 운영팀 문의 폼 붙기 전까지 자리만
           <button
             type="button"
-            disabled
+            onClick={openContactDialog}
             className="bg-background-canvas border-status-danger-border text-status-danger-text rounded-12 text-body-16 h-10 border px-4 font-medium tracking-[0.4px] disabled:cursor-not-allowed"
           >
             문제 신고

@@ -1,26 +1,30 @@
-import { FolderSearch, Layers, MessageCircleMore, Waypoints } from 'lucide-react';
-
 import welcomeCharacter from '@/assets/brand/welcome-character.png';
 import { FeatureCard } from '@/components/home/FeatureCard';
+import {
+  RiidoAiSearchIcon,
+  RiidoArrangeIcon,
+  RiidoChatIcon,
+  RiidoVisionIcon,
+} from '@/components/icons/riido';
 
 const FEATURES = [
   {
-    icon: MessageCircleMore,
+    icon: RiidoChatIcon,
     title: '대화로 원하는 답 찾아가기',
     description: '후속 질문을 이어가며 답을 찾아갈 수 있어요.',
   },
   {
-    icon: FolderSearch,
+    icon: RiidoAiSearchIcon,
     title: '필요한 정보 바로 찾기',
     description: '질문만으로 필요한 정보를 빠르게 확인할 수 있어요.',
   },
   {
-    icon: Waypoints,
+    icon: RiidoArrangeIcon,
     title: '내 질문에 맞게 쉽게 이해하기',
     description: '필요한 내용만 구성된 답변을 확인할 수 있어요.',
   },
   {
-    icon: Layers,
+    icon: RiidoVisionIcon,
     title: '흩어진 정보 한 번에 확인하기',
     description: '여러 페이지의 정보를 하나의 답변으로 확인할 수 있어요.',
   },
@@ -46,9 +50,10 @@ export function WelcomeScreen() {
           </p>
         </div>
         {/* Figma group `character` 392×344 — 바닥 그림자 3겹(블러 타원) 위에 캐릭터 이미지.
-            이미지는 346×346으로 (28, -33)에 놓고 위쪽을 잘라낸다 (imageTransform 1.132/0.994, offset -0.080/0.095) */}
+            이미지는 346×346으로 (28, -33)에 놓고 위쪽을 잘라낸다 (imageTransform 1.132/0.994, offset -0.080/0.095).
+            윤서 요청으로 그림자까지 통째로 좌우반전(-scale-x-100) — Figma 원본은 오른쪽을 본다 */}
         <div
-          className="relative h-[344px] w-[392px] shrink-0 overflow-hidden"
+          className="relative h-[344px] w-[392px] shrink-0 -scale-x-100 overflow-hidden"
           aria-hidden
           data-name="welcome-character"
         >
