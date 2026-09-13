@@ -1,4 +1,5 @@
 import { request } from '@/api/client';
+import type { MessageFeedback } from '@/api/feedback';
 import { getCurrentUser } from '@/lib/auth';
 
 export type Role = 'user' | 'assistant';
@@ -41,6 +42,14 @@ export type Message = {
   answerType?: AnswerType | null;
   /** 구조화된 답변. user 메시지나 구버전 응답에서는 비어 있다 */
   sections?: AnswerSection[];
+  /** AI가 이 턴에 붙인 식별자. 평가를 AI 품질 로그와 대조할 때 쓴다 */
+  qnaUuid?: string | null;
+  /** 이 답변이 답한 질문 메시지 id. 질문 메시지는 null */
+  questionId?: number | null;
+  /** 이미 남긴 평가. 평가 전이면 null */
+  feedback?: MessageFeedback | null;
+  /** 담아 둔(북마크한) 메시지인지 */
+  bookmarked?: boolean;
   /** UTC ISO-8601 초 단위 문자열 (예: '2026-08-24T14:20:01Z') */
   createdAt: string;
 };

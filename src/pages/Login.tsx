@@ -1,29 +1,35 @@
-import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import loginDark from '@/assets/brand/login-dark.jpg';
+import loginLight from '@/assets/brand/login-light.jpg';
+import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { toUserMessage } from '@/api/client';
 import { loginUser } from '@/api/users';
-import { Button } from '@/components/ui/button';
 import { saveCurrentUser } from '@/lib/auth';
+import { useTheme } from '@/lib/theme';
+import { cn } from '@/lib/utils';
 
-const FIELD_CLASS =
-  'bg-muted placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-12 w-full rounded-2xl border border-transparent px-4 text-base outline-none focus-visible:ring-3';
-
+/**
+ * Figma `log in` (2238:11898) / `log in dark` (2629:4237) — REST JSON 기준.
+ * canvas-strong 배경, 664×358 카드(surface, border-default 1px, radius 24, pad 10/40/10/10,
+ * shadow 0 16 35 6% + 0 64 64 5%). 좌: 307×338 fill-neutral-strong radius 16 / 우: 256px 컬럼(py 32).
+ * 로고 48 → gap16 → 제목(20/600)+설명(16/400) gap4 → gap24 → 입력(48, radius16) … 버튼(48, radius16)
+ * ※ Figma에 비밀번호 칸은 없다. 닉네임만 받는다.
+ */
 export default function Login() {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const [name, setName] = useState('');
-  // 화면에만 있는 비밀번호 칸. 서버로 보내지 않고 로그인 조건에도 쓰지 않는다.
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const trimmed = name.trim();
+  const canSubmit = trimmed.length > 0 && !isSubmitting;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!trimmed || isSubmitting) return;
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -40,68 +46,70 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center px-4">
-      <div className="border-border bg-card w-full max-w-[400px] rounded-3xl border p-10">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col items-center gap-4">
-              {/* 프로필 사진 자리 — 업로드 기능이 붙기 전까지 원형 자리만 잡아 둔다 */}
-              <div className="bg-muted size-16 shrink-0 rounded-full" aria-hidden />
+    // Figma log in: 카드가 화면 세로 중앙보다 21px 위 (y 312) → 아래 pad 42
+    <div className="bg-background-canvas-strong flex h-screen items-center justify-center px-4 pb-[42px]">
+      <div
+        className="bg-background-surface border-border-default rounded-24 flex w-full max-w-[664px] items-center justify-between gap-2.5 border py-[9px] pr-[39px] pl-[9px] shadow-[0_16px_35px_rgba(0,0,0,0.06),0_64px_64px_rgba(0,0,0,0.05)]"
+        data-name="login-card"
+      >
+        {/* Figma Rectangle 1 (307×338, radius 16) — 디자이너 캐릭터 일러스트, 라이트/다크 별도 이미지 */}
+        <img
+          src={isDark ? loginDark : loginLight}
+          alt=""
+          className="bg-fill-neutral-strong rounded-16 hidden h-[338px] w-[307px] shrink-0 object-cover md:block"
+          data-name="login-illustration"
+        />
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex h-[338px] w-[256px] shrink-0 flex-col items-center justify-between py-8"
+          data-name="login-card-content"
+        >
+          <div className="flex w-full flex-col items-center gap-6">
+            <div className="flex w-full flex-col items-center gap-4">
+              <img src={riidoSymbol} alt="Riido" className="size-12 shrink-0" />
               <div className="flex w-full flex-col gap-1 text-center">
-                <h1 className="text-xl font-semibold">리도 AI 가이드</h1>
-                <p className="text-muted-foreground text-base leading-normal">
-                  이름을 입력하면 시작할 수 있어요. 처음 온 이름이면 자동으로 가입돼요.
+                <h1 className="text-text-primary text-title-20 font-semibold tracking-[-0.4px]">
+                  로그인
+                </h1>
+                <p className="text-text-secondary text-body-16">
+                  닉네임을 입력하고 로그인해 주세요.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex w-full flex-col gap-1.5">
               <input
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={50}
-                placeholder="이름"
-                aria-label="이름"
-                className={FIELD_CLASS}
+                placeholder="닉네임을 입력해 주세요."
+                aria-label="닉네임"
+                aria-invalid={error !== null}
+                className={cn(
+                  'bg-fill-neutral-strong text-text-primary placeholder:text-text-tertiary rounded-16 text-body-16 h-12 w-full border border-transparent px-4 py-3 outline-none',
+                  'focus-visible:ring-ring/50 focus-visible:ring-3',
+                  error !== null && 'border-status-danger-border',
+                )}
               />
-
-              <div className="relative">
-                <input
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="off"
-                  placeholder="비밀번호"
-                  aria-label="비밀번호"
-                  className={`${FIELD_CLASS} pr-12`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsPasswordVisible((visible) => !visible)}
-                  aria-label={isPasswordVisible ? '비밀번호 숨기기' : '비밀번호 표시'}
-                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-4 -translate-y-1/2 rounded outline-offset-2"
-                >
-                  {isPasswordVisible ? (
-                    <Eye className="size-5" aria-hidden />
-                  ) : (
-                    <EyeOff className="size-5" aria-hidden />
-                  )}
-                </button>
-              </div>
+              {error && <p className="text-status-danger-text text-caption-12">{error}</p>}
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              disabled={!trimmed || isSubmitting}
-              className="h-12 w-full rounded-2xl text-base"
-            >
-              {isSubmitting ? '로그인 중…' : '로그인'}
-            </Button>
-            {error && <p className="text-destructive text-center text-sm">{error}</p>}
-          </div>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={cn(
+              'rounded-16 text-body-16 flex h-12 w-full items-center justify-center px-4 py-3 font-medium tracking-[-0.4px] transition-colors outline-none',
+              'focus-visible:ring-ring/50 focus-visible:ring-3',
+              canSubmit
+                ? 'bg-primary-solid text-text-primary active:bg-primary-solid-strong active:duration-100'
+                : 'bg-fill-disable text-text-disable cursor-not-allowed',
+            )}
+          >
+            {isSubmitting ? '로그인 중…' : '로그인'}
+          </button>
         </form>
       </div>
     </div>

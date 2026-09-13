@@ -1,5 +1,7 @@
 export const env = {
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
+  /** 운영팀 문의가 도착할 메일 주소 (mailto). 문의 API가 생기면 그쪽으로 교체 */
+  supportEmail: (import.meta.env.VITE_SUPPORT_EMAIL as string | undefined) ?? '',
 } as const;
 
 if (!env.apiBaseUrl) {

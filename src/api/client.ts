@@ -62,6 +62,11 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
     );
   }
 
+  // 204 No Content(북마크·평가 취소 등)는 본문이 없다
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   const data = await readJson<T>(response);
   if (data === null) {
     throw new ApiError('서버 응답을 해석하지 못했습니다.', response.status, null);

@@ -50,13 +50,18 @@ export function SectionBlock({ section, bodyBox, asChips, className }: SectionBl
     <Markdown
       content={section.text}
       variant="answer"
-      className={cn('min-w-0', isHeadline && 'font-medium')}
+      className={cn('min-w-0', isHeadline && 'font-medium tracking-[-0.4px] [&_p]:leading-6')}
     />
   );
 
   return (
     <section className={cn('flex w-full flex-col gap-2', className)}>
-      {!isHeadline && <h4 className="text-base leading-tight font-medium">{section.label}</h4>}
+      {/* Figma section-heading: Title/16 Medium, ls -0.4 */}
+      {!isHeadline && (
+        <h4 className="text-text-primary text-title-16 font-medium tracking-[-0.4px]">
+          {section.label}
+        </h4>
+      )}
       {bodyBox ? (
         <SectionBox variant="inset">{body}</SectionBox>
       ) : (

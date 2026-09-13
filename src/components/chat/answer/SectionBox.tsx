@@ -11,9 +11,12 @@ import { cn } from '@/lib/utils';
 export type BoxVariant = 'note' | 'card' | 'inset';
 
 const VARIANTS: Record<BoxVariant, string> = {
-  note: 'bg-answer-note border-answer-note-border rounded-2xl border px-6 py-4',
-  card: 'bg-answer-card rounded-xl px-6 py-4',
-  inset: 'bg-answer-inset border-answer-inset-border rounded-2xl border p-4',
+  // Figma info-box(헤더 아래): radius 12, pad 16/20
+  note: 'bg-answer-note border-answer-note-border rounded-12 border px-[19px] py-[15px]',
+  // Figma answer-body-panel: radius 12, pad 16/20, border-strong
+  card: 'bg-answer-card border-answer-card-border rounded-12 border px-[19px] py-[15px]',
+  // Figma step-list / 본문 안 info-box(주의사항 등): radius 10, pad 16/20
+  inset: 'bg-answer-inset border-answer-inset-border rounded-[10px] border px-[19px] py-[15px]',
 };
 
 type SectionBoxProps = {
