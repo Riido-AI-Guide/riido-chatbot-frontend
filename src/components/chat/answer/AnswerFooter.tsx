@@ -140,7 +140,12 @@ export function AnswerFooter() {
   const ratingButton = (value: FeedbackRating, icon: LucideIcon, label: string) => (
     <Popover
       open={openRating === value}
-      onOpenChange={(open) => setOpenRating(open ? value : null)}
+      // 여는 건 handleRate만 — 트리거가 스스로 열면 '평가 취소' 클릭에도 팝오버가 다시 뜬다
+      onOpenChange={(open) => {
+        if (!open) {
+          setOpenRating(null);
+        }
+      }}
     >
       <PopoverTrigger
         render={

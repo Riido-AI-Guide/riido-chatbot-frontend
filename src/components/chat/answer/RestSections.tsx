@@ -2,8 +2,13 @@ import type { AnswerSection } from '@/api/conversations';
 import { SectionBlock } from '@/components/chat/answer/SectionBlock';
 import { SectionBox, type BoxVariant } from '@/components/chat/answer/SectionBox';
 
-/** Figma에서 색이 정해진 라벨: 주의사항 = 주황 박스, 제한사항 = 빨간 박스 */
+/**
+ * 부가 설명 라벨은 박스로 감싼다 (Figma info-box).
+ * 참고·팁은 회색 박스, 주의사항은 주황, 제한사항은 빨강.
+ */
 const BOXED_LABELS: Record<string, BoxVariant> = {
+  참고: 'notice',
+  팁: 'notice',
   주의사항: 'warning',
   제한사항: 'danger',
 };

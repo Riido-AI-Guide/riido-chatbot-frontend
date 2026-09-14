@@ -136,22 +136,21 @@ function ContactForm({ onClose }: { onClose: () => void }) {
               />
             </PopoverTrigger>
             {/* Figma type-list: select 가운데 정렬 264px, select 위를 덮으며 열린다.
-                첫 줄(select type)은 현재 선택값 헤더, 그 아래 유형 9개 */}
+                첫 줄(select type)은 "문의 유형을 선택해주세요." 고정, 그 아래 유형 9개 */}
             <PopoverContent
               side="bottom"
               align="center"
               sideOffset={-48}
               className="bg-background-surface/20 w-[264px] rounded-[16px] p-0 shadow-xl backdrop-blur-2xl"
             >
+              {/* 첫 줄은 항상 안내 문구로 고정 — 고른 항목은 아래 목록에만 체크가 붙는다 */}
               <div className="text-text-primary text-body-16 flex h-12 items-center gap-2.5 rounded-t-[16px] px-4">
                 <span className="flex size-6 shrink-0 items-center justify-center" aria-hidden>
-                  {type !== null && (
+                  {type === null && (
                     <Check className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
                   )}
                 </span>
-                <span className="min-w-0 flex-1 truncate">
-                  {type ?? '문의 유형을 선택해주세요.'}
-                </span>
+                <span className="min-w-0 flex-1 truncate">문의 유형을 선택해주세요.</span>
               </div>
               {/* Figma type-list 264×277: 넘치는 항목은 스크롤 */}
               <ul

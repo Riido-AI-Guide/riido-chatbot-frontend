@@ -23,7 +23,7 @@ export function TypingIndicator() {
     <div className="flex items-start gap-2" role="status" aria-live="polite">
       <ChatProfile />
       <div
-        className="bg-fill-neutral-strong border-border-strong flex h-14 items-center rounded-[20px] border px-[23px] py-[15px]"
+        className="bg-fill-neutral-strong border-border-strong flex h-14 items-center rounded-16 border px-[23px] py-[15px]"
         data-name="answer-thinking"
       >
         <span className="text-shimmer text-body-16">

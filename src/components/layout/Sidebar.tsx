@@ -39,6 +39,8 @@ type SidebarProps = {
   onNewChat: () => void;
   /** 사이드바 접기 (Figma sidebar-left 토글) */
   onCollapse: () => void;
+  /** 값이 바뀌면 "답변 보관" 목록을 편다 (접힌 레일에서 눌러 들어온 경우) */
+  openBookmarksKey?: number;
   /** 헤더 채팅 검색어 — 최근 대화를 제목으로 거른다 */
   filter?: string;
 };
@@ -82,12 +84,14 @@ export function Sidebar({
   onSelect,
   onNewChat,
   onCollapse,
+  openBookmarksKey = 0,
   filter = '',
 }: SidebarProps) {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [isBookmarksOpen, setIsBookmarksOpen] = useState(false);
+  // 레일의 "답변 보관"으로 펼쳐 들어온 경우(key>0)에는 처음부터 목록을 펴 둔다
+  const [isBookmarksOpen, setIsBookmarksOpen] = useState(openBookmarksKey > 0);
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const user = getCurrentUser();
@@ -99,7 +103,8 @@ export function Sidebar({
     }
     // 목록은 부가 기능 — 불러오기에 실패해도 채팅 자체는 계속되어야 하므로 조용히 비운다
     fetchConversations(userId)
-      .then(setConversations)
+      // 서버가 예상 밖의 형태를 주더라도 화면이 통째로 죽지 않게 배열만 받는다
+      .then((list) => setConversations(Array.isArray(list) ? list : []))
       .catch(() => setConversations([]));
   }, [userId, refreshKey]);
 
@@ -110,23 +115,30 @@ export function Sidebar({
     }
     const load = () => {
       fetchBookmarks(userId)
-        .then(setBookmarks)
+        .then((list) => setBookmarks(Array.isArray(list) ? list : []))
         .catch(() => setBookmarks([]));
     };
     load();
     return subscribeBookmarksChanged(load);
   }, [userId]);
 
+  // 레일에서 "답변 보관"을 눌러 들어오면 목록을 펴 둔다 (prop이 바뀔 때 렌더 중 보정 — effect 불필요)
+  const [seenBookmarksKey, setSeenBookmarksKey] = useState(openBookmarksKey);
+  if (openBookmarksKey !== seenBookmarksKey) {
+    setSeenBookmarksKey(openBookmarksKey);
+    setIsBookmarksOpen(true);
+  }
+
   const handleRemoveBookmark = async (messageId: number) => {
     setBookmarks((previous) => previous.filter((bookmark) => bookmark.message.id !== messageId));
     try {
       await removeBookmark(messageId);
-      emitBookmarksChanged();
+      emitBookmarksChanged({ messageId, bookmarked: false });
     } catch {
       // 실패하면 목록을 다시 받아 원상복구
       if (userId !== undefined) {
         fetchBookmarks(userId)
-          .then(setBookmarks)
+          .then((list) => setBookmarks(Array.isArray(list) ? list : []))
           .catch(() => undefined);
       }
     }

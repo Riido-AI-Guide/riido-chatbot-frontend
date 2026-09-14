@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { addBookmark, removeBookmark } from '@/api/bookmarks';
 import { ApiError, toUserMessage } from '@/api/client';
@@ -19,7 +19,7 @@ import {
   type FeedbackReasonCode,
   type MessageFeedback,
 } from '@/api/feedback';
-import { emitBookmarksChanged } from '@/lib/bookmark-events';
+import { emitBookmarksChanged, subscribeBookmarksChanged } from '@/lib/bookmark-events';
 
 /** 화면에 그리는 메시지. 서버 메시지와 낙관적으로 추가한 메시지를 같은 모양으로 다룬다. */
 export type ChatMessage = {
@@ -209,7 +209,7 @@ export function useChat() {
         } else {
           await removeBookmark(messageId);
         }
-        emitBookmarksChanged();
+        emitBookmarksChanged({ messageId, bookmarked });
       } catch (caught) {
         patchMessage(messageId, { bookmarked: !bookmarked });
         throw caught;
@@ -222,6 +222,17 @@ export function useChat() {
    * 좋아요/싫어요 저장. 처음 누를 땐 reason 없이, 상세사유를 고르면 같은 rating에 reason을 실어 다시 보낸다.
    * 응답이 곧 서버 상태라 그대로 메시지에 덮어쓴다.
    */
+  // 사이드바 "답변 보관"에서 해제하면 채팅에 떠 있는 같은 답변의 북마크도 꺼진다
+  useEffect(
+    () =>
+      subscribeBookmarksChanged((change) => {
+        if (change !== undefined) {
+          patchMessage(change.messageId, { bookmarked: change.bookmarked });
+        }
+      }),
+    [patchMessage],
+  );
+
   const rateMessage = useCallback(
     async (messageId: number, rating: FeedbackRating, reason: FeedbackReasonCode | null = null) => {
       const saved = await saveFeedback(messageId, { rating, reason });

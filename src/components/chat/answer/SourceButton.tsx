@@ -76,7 +76,8 @@ export function SourceButton({ sources }: SourceButtonProps) {
       >
         <ul className="flex flex-col gap-0.5">
           {sources.map((source, index) => {
-            const label = source.section || source.docId;
+            // 문서 경로 구분자는 Figma 표기대로 '|' (서버는 '상위 > 하위'로 준다)
+            const label = (source.section || source.docId).replace(/\s*>\s*/g, ' | ');
             const rowClass =
               'text-text-secondary hover:bg-fill-hover-inverse hover:text-text-inverse active:bg-fill-press-inverse flex h-8 w-full items-center gap-1 rounded-12 px-2 py-[7px] text-caption-12 transition-colors outline-none focus-visible:text-text-inverse';
 

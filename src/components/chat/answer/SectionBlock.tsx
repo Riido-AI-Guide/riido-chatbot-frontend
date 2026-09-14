@@ -6,7 +6,7 @@ import { Markdown } from '@/components/chat/Markdown';
 import { SectionBox } from '@/components/chat/answer/SectionBox';
 import { useMessageActions } from '@/components/chat/answer/MessageActionsContext';
 import { SourceButton } from '@/components/chat/answer/SourceButton';
-import { HEADLINE_LABELS } from '@/components/chat/answer/sections';
+import { HEADLINE_LABELS, displayLabel } from '@/components/chat/answer/sections';
 import { cn } from '@/lib/utils';
 
 type SectionBlockProps = {
@@ -110,7 +110,7 @@ export function SectionBlock({ section, bodyBox, asChips, className }: SectionBl
       {/* Figma section-heading: Title/16 Medium, ls -0.4 */}
       {!isHeadline && (
         <h4 className="text-text-primary text-title-16 font-medium tracking-[-0.4px]">
-          {section.label}
+          {displayLabel(section.label)}
         </h4>
       )}
       {bodyBox ? <SectionBox variant="inset">{body}</SectionBox> : body}

@@ -55,6 +55,8 @@ function RailButton({ icon: Icon, label, onClick, disabled = false, className }:
 type SidebarRailProps = {
   onNewChat: () => void;
   onExpand: () => void;
+  /** 답변 보관 — 펼치면서 보관 목록까지 연다 */
+  onOpenBookmarks: () => void;
 };
 
 /**
@@ -62,7 +64,7 @@ type SidebarRailProps = {
  * 헤더 64(로고 32, hover 시 펼치기 토글) / sidebar-small-icon 48px 줄(pad 4/12, 40 박스 radius 12, hover: fill-surface-strong)
  * 하단 문의·설정, 그 아래 border-top + pad 12 프로필(32 원형).
  */
-export function SidebarRail({ onNewChat, onExpand }: SidebarRailProps) {
+export function SidebarRail({ onNewChat, onExpand, onOpenBookmarks }: SidebarRailProps) {
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const user = getCurrentUser();
@@ -94,8 +96,8 @@ export function SidebarRail({ onNewChat, onExpand }: SidebarRailProps) {
 
       <nav className="flex flex-1 flex-col items-center py-3">
         <RailButton icon={SquarePen} label="새 채팅" onClick={onNewChat} />
-        {/* TODO: 답변 보관 — API 붙기 전까지 비활성 */}
-        <RailButton icon={Archive} label="답변 보관" disabled />
+        {/* 접힌 상태에선 목록을 펼칠 자리가 없어서, 누르면 사이드바를 열면서 보관 목록을 편다 */}
+        <RailButton icon={Archive} label="답변 보관" onClick={onOpenBookmarks} />
         <RailButton icon={MessagesSquare} label="최근 대화" onClick={onExpand} />
       </nav>
 
