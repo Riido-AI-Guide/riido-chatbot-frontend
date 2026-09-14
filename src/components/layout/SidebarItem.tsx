@@ -45,7 +45,7 @@ export function SidebarItem({
   return (
     <div
       className={cn(
-        'rounded-12 my-1 flex h-10 w-full items-center pr-3 transition-colors',
+        'group/row rounded-12 my-1 flex h-10 w-full items-center pr-3 transition-colors',
         onClick && 'has-[button:hover]:bg-fill-surface-strong',
         active && 'bg-fill-surface-strong',
         disabled && 'opacity-50',

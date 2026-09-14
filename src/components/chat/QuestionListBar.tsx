@@ -17,6 +17,7 @@ type QuestionListBarProps = {
  * Figma `question-list-bar` (1707:3803) — 대화 우측에 질문 개수만큼 쌓이는 24×4 바 (gap 8).
  * 바에 마우스를 올리면 바가 진해지고(text-primary) 왼쪽에 질문 미리보기 pill이 뜬다:
  * `question preview` — surface 배경, border-disable, radius 12, pad 8/16, Body/14 Medium, shadow-m.
+ * 바 왼쪽 8px, 바 세로 중앙 정렬, 최대 296px(넘치면 …).
  * 클릭하면 해당 질문으로 스크롤한다.
  */
 export function QuestionListBar({ entries, className }: QuestionListBarProps) {
@@ -55,7 +56,7 @@ export function QuestionListBar({ entries, className }: QuestionListBarProps) {
             {isHover && (
               <div
                 role="tooltip"
-                className="bg-background-surface border-border-disable text-text-primary shadow-m rounded-12 text-body-14 pointer-events-none absolute top-1/2 right-full mr-2 max-w-[320px] -translate-y-1/2 truncate border px-4 py-[7px] font-medium whitespace-nowrap"
+                className="bg-background-surface border-border-disable text-text-primary shadow-m rounded-12 text-body-14 pointer-events-none absolute top-1/2 right-full mr-2 max-w-[296px] -translate-y-1/2 truncate border px-4 py-[7px] font-medium whitespace-nowrap"
                 data-name="question preview"
               >
                 {entry.label}

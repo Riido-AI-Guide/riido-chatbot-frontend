@@ -1,5 +1,12 @@
 import type { AnswerSection } from '@/api/conversations';
 import { SectionBlock } from '@/components/chat/answer/SectionBlock';
+import { SectionBox, type BoxVariant } from '@/components/chat/answer/SectionBox';
+
+/** Figma에서 색이 정해진 라벨: 주의사항 = 주황 박스, 제한사항 = 빨간 박스 */
+const BOXED_LABELS: Record<string, BoxVariant> = {
+  주의사항: 'warning',
+  제한사항: 'danger',
+};
 
 type RestSectionsProps = {
   sections: AnswerSection[];
@@ -20,9 +27,17 @@ export function RestSections({ sections, except }: RestSectionsProps) {
 
   return (
     <>
-      {rest.map((section, index) => (
-        <SectionBlock key={`${section.label}-${index}`} section={section} />
-      ))}
+      {rest.map((section, index) => {
+        const variant = BOXED_LABELS[section.label];
+        const key = `${section.label}-${index}`;
+        return variant ? (
+          <SectionBox key={key} variant={variant}>
+            <SectionBlock section={section} className="gap-[10px]" />
+          </SectionBox>
+        ) : (
+          <SectionBlock key={key} section={section} />
+        );
+      })}
     </>
   );
 }

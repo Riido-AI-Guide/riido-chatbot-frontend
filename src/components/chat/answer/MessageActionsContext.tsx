@@ -16,6 +16,8 @@ export type MessageActions = {
   onToggleBookmark: (bookmarked: boolean) => Promise<void>;
   onRate: (rating: FeedbackRating, reason?: FeedbackReasonCode | null) => Promise<MessageFeedback>;
   onClearRating: () => Promise<void>;
+  /** 관련 질문(related-item)을 눌렀을 때 그 질문을 이어서 보낸다 */
+  onAsk?: (query: string) => void;
 };
 
 const MessageActionsContext = createContext<MessageActions | null>(null);

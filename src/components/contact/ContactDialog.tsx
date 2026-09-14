@@ -33,7 +33,7 @@ const FIELD =
  * Figma `customer inquiry` (2235:11893) — 운영팀에 문의하기 팝업.
  * 396×508 카드: background-answer, radius 16, pad 24/32, shadow-xl. 헤더(Title/20 + X) + 캡션(Body/14 secondary)
  * → 이메일 라벨/입력(48) → 유형 select(48, chevron) + 내용(168) → 보내기(332×40, radius 12; 유효할 때 primary-solid)
- * 유형 목록(type-list): 264px radius 16 shadow-xl, 행 48(안쪽 44 radius 12, hover fill-hover), 선택 항목에 check.
+ * 유형 목록(type-list): 264×277 radius 16 shadow-xl, surface 20% + 글래스(backdrop blur), 행 48(안쪽 44 radius 12, hover fill-hover), 선택 항목에 check, 넘치면 스크롤.
  * 문의 API가 아직 없어서 보내기는 mailto로 메일 앱을 연다 (받는 곳 VITE_SUPPORT_EMAIL, 제목 [유형], 본문에 답변 이메일+내용).
  */
 export function ContactDialogHost() {
@@ -45,7 +45,9 @@ export function ContactDialogHost() {
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Backdrop className="bg-fill-dim data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0 fixed inset-0 z-50" />
+        {/* Figma엔 열릴 때 커서(포커스)가 어느 칸에도 없다 → 첫 입력칸 자동 포커스 끔 */}
         <DialogPrimitive.Popup
+          initialFocus={false}
           className="bg-answer-card data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 rounded-16 fixed top-1/2 left-1/2 z-50 w-[396px] max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 px-8 py-6 shadow-xl outline-none"
           aria-labelledby="contact-title"
         >
@@ -133,13 +135,30 @@ function ContactForm({ onClose }: { onClose: () => void }) {
                 strokeWidth={ICON_STROKE}
               />
             </PopoverTrigger>
+            {/* Figma type-list: select 가운데 정렬 264px, select 위를 덮으며 열린다.
+                첫 줄(select type)은 현재 선택값 헤더, 그 아래 유형 9개 */}
             <PopoverContent
               side="bottom"
-              align="start"
-              sideOffset={4}
-              className="bg-answer-card w-[264px] rounded-[16px] p-0 shadow-xl"
+              align="center"
+              sideOffset={-48}
+              className="bg-background-surface/20 w-[264px] rounded-[16px] p-0 shadow-xl backdrop-blur-2xl"
             >
-              <ul role="listbox" aria-label="문의 유형" className="flex flex-col">
+              <div className="text-text-primary text-body-16 flex h-12 items-center gap-2.5 rounded-t-[16px] px-4">
+                <span className="flex size-6 shrink-0 items-center justify-center" aria-hidden>
+                  {type !== null && (
+                    <Check className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
+                  )}
+                </span>
+                <span className="min-w-0 flex-1 truncate">
+                  {type ?? '문의 유형을 선택해주세요.'}
+                </span>
+              </div>
+              {/* Figma type-list 264×277: 넘치는 항목은 스크롤 */}
+              <ul
+                role="listbox"
+                aria-label="문의 유형"
+                className="riido-scrollbar flex max-h-[229px] flex-col overflow-y-auto pb-0.5"
+              >
                 {INQUIRY_TYPES.map((item) => {
                   const isSelected = item === type;
                   return (

@@ -49,7 +49,7 @@ export function WelcomeScreen() {
             이용가이드를 바탕으로 빠르고 정확하게 답변해드릴게요!
           </p>
         </div>
-        {/* Figma group `character` 392×344 — 바닥 그림자 3겹(블러 타원) 위에 캐릭터 이미지.
+        {/* Figma group `character` 392×344 — 바닥 그림자 3겹(Layer blur 20/12/8 → CSS blur는 절반인 10/6/4) 위에 캐릭터 이미지.
             이미지는 346×346으로 (28, -33)에 놓고 위쪽을 잘라낸다 (imageTransform 1.132/0.994, offset -0.080/0.095).
             윤서 요청으로 그림자까지 통째로 좌우반전(-scale-x-100) — Figma 원본은 오른쪽을 본다 */}
         <div
@@ -57,9 +57,9 @@ export function WelcomeScreen() {
           aria-hidden
           data-name="welcome-character"
         >
-          <span className="absolute top-[256px] left-[135px] h-10 w-[191px] rounded-full bg-[#181d21]/22 blur-[20px]" />
-          <span className="absolute top-[263px] left-[126px] h-[26px] w-[172px] rounded-full bg-[#181d21]/36 blur-[12px]" />
-          <span className="absolute top-[262px] left-[223px] h-[22px] w-[46px] rounded-full bg-[#181d21] blur-[8px]" />
+          <span className="absolute top-[256px] left-[135px] h-10 w-[191px] rounded-full bg-[#181d21]/22 blur-[10px]" />
+          <span className="absolute top-[263px] left-[126px] h-[26px] w-[172px] rounded-full bg-[#181d21]/36 blur-[6px]" />
+          <span className="absolute top-[262px] left-[223px] h-[22px] w-[46px] rounded-full bg-[#181d21] blur-[4px]" />
           <img
             src={welcomeCharacter}
             alt=""

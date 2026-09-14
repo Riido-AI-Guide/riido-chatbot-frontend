@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 
 import { addBookmark, removeBookmark } from '@/api/bookmarks';
-import { toUserMessage } from '@/api/client';
+import { ApiError, toUserMessage } from '@/api/client';
 import {
   appendMessage,
   createConversation,
@@ -49,6 +49,12 @@ export type ChatMessage = {
  * 둘을 나눠 둬야 대화 전환에서는 '답변을 작성하고 있어요'를 안 띄울 수 있다.
  */
 export type ChatStatus = 'idle' | 'sending' | 'loading' | 'error';
+export type ErrorKind = 'network' | 'answer';
+
+/** Figma 에러 컴포넌트 분기: 서버가 응답한(ApiError) 실패는 answer-creation-failed, 나머지는 network-connection-error */
+function toErrorKind(caught: unknown): ErrorKind {
+  return caught instanceof ApiError ? 'answer' : 'network';
+}
 
 function toChatMessage(message: Message): ChatMessage {
   return {
@@ -71,6 +77,8 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<ChatStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+  /** 에러 종류 — network: 서버에 못 닿음(입력창 위 빨간 카드), answer: 서버는 응답했지만 답변 생성 실패(답변 자리 주황 카드) */
+  const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   /** 같은 질문을 다시 보낸 횟수. Figma 네트워크 에러 흐름(최대 3회) 표시에 쓴다. */
   const [retryCount, setRetryCount] = useState(0);
 
@@ -85,6 +93,7 @@ export function useChat() {
     async (query: string) => {
       setStatus('sending');
       setError(null);
+      setErrorKind(null);
 
       try {
         // 열려 있는 대화가 있으면 이어가고(멀티턴), 없으면 새 대화를 만든다.
@@ -105,6 +114,7 @@ export function useChat() {
       } catch (caught) {
         // 낙관적으로 붙여 둔 사용자 메시지는 그대로 두고 재전송할 수 있게 한다.
         setError(toUserMessage(caught));
+        setErrorKind(toErrorKind(caught));
         setStatus('error');
       }
     },
@@ -148,9 +158,12 @@ export function useChat() {
       return;
     }
 
-    setRetryCount((count) => count + 1);
+    // 재시도 횟수(n/3)는 네트워크 에러 흐름에만 있다. 답변 생성 실패의 [다시 생성]은 보통 전송처럼 보인다.
+    if (errorKind === 'network') {
+      setRetryCount((count) => count + 1);
+    }
     void requestReply(query);
-  }, [requestReply, isBusy]);
+  }, [requestReply, isBusy, errorKind]);
 
   /** 사이드바에서 고른 옛 대화를 불러와 화면에 띄운다. */
   const loadConversation = useCallback(
@@ -161,6 +174,7 @@ export function useChat() {
       // 'sending'이 아니라 'loading'이다 — 대화 전환에는 타이핑 인디케이터를 띄우지 않는다.
       setStatus('loading');
       setError(null);
+      setErrorKind(null);
       pendingQueryRef.current = null;
 
       try {
@@ -171,6 +185,7 @@ export function useChat() {
         setStatus('idle');
       } catch (caught) {
         setError(toUserMessage(caught));
+        setErrorKind('network');
         setStatus('error');
       }
     },
@@ -231,6 +246,7 @@ export function useChat() {
     setTitle(null);
     setMessages([]);
     setError(null);
+    setErrorKind(null);
     setRetryCount(0);
     setStatus('idle');
   }, []);
@@ -241,6 +257,7 @@ export function useChat() {
     messages,
     status,
     error,
+    errorKind,
     /** 답변 대기 중. 타이핑 인디케이터 표시 여부에 쓴다. */
     isSending: status === 'sending',
     /** 실패한 질문을 다시 보내는 중 (Figma network-connection-retry-loading) */

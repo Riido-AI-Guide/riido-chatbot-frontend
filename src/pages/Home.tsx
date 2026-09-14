@@ -1,6 +1,7 @@
-import { Rocket, Wrench } from 'lucide-react';
+import { CalendarDays, Rocket, Wrench } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { AnswerFailedCard } from '@/components/chat/AnswerFailedCard';
 import { AnswerLoader } from '@/components/chat/AnswerLoader';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ContactDialogHost } from '@/components/contact/ContactDialog';
@@ -16,10 +17,11 @@ import { SidebarRail } from '@/components/layout/SidebarRail';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 
-/** Figma quick-links-row — 엔트리 화면 입력창 위 추천 질문 (아이콘: rocket / wrench) */
+/** Figma quick-links-row — 엔트리 화면 입력창 위 추천 질문. 이용가이드에 답이 있는 질문(Figma 채팅 예시)으로 */
 const QUICK_LINKS = [
-  { icon: Rocket, query: '대기 작업, 백로그, 작업은 어떻게 다른가요?' },
-  { icon: Wrench, query: 'MCP 서버는 어떻게 연결하나요?' },
+  { icon: Rocket, query: '대기랑 백로그 차이가 뭔가요?' },
+  { icon: Wrench, query: 'AI 에이전트는 어떻게 설정하고 작업을 맡기나요?' },
+  { icon: CalendarDays, query: '미팅을 구글 캘린더와 연동할 수 있나요?' },
 ] as const;
 
 export default function Home() {
@@ -28,6 +30,7 @@ export default function Home() {
     title,
     messages,
     error,
+    errorKind,
     isSending,
     isRetrying,
     retryCount,
@@ -91,6 +94,7 @@ export default function Home() {
             className={cn(
               'mx-auto flex w-full flex-col',
               // 채팅: 맨 아래로 내렸을 때 마지막 답변 카드 ↔ 입력창 72px (푸터 위 pad 8 + 64)
+              // main이 스크롤바 칸(12px)을 항상 비워 두므로(scrollbar-gutter) 1168 기준 중앙 = Figma x184
               isEmpty ? 'max-w-[800px] pb-6' : 'max-w-[900px] pr-11 pb-16',
             )}
           >
@@ -113,6 +117,7 @@ export default function Home() {
                         onToggleBookmark: toggleBookmark,
                         onRate: rateMessage,
                         onClearRating: clearRating,
+                        onAsk: send,
                       }}
                     />
                   </div>
@@ -123,6 +128,13 @@ export default function Home() {
             {isSending && (
               <div className="mt-12">
                 <TypingIndicator />
+              </div>
+            )}
+
+            {/* Figma answer-creation-failed: 답변 자리(질문 아래 48px)에 주황 카드 + [다시 생성] */}
+            {error !== null && errorKind === 'answer' && !isSending && (
+              <div className="mt-12">
+                <AnswerFailedCard onRetry={retry} disabled={isBusy} />
               </div>
             )}
 
@@ -151,7 +163,7 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {(error !== null || isRetrying) && (
+            {((error !== null && errorKind === 'network') || isRetrying) && (
               <ErrorNotice
                 message={error ?? ''}
                 onRetry={retry}

@@ -16,6 +16,8 @@ export type MessageActionHandlers = {
     reason?: FeedbackReasonCode | null,
   ) => Promise<MessageActions['feedback'] & object>;
   onClearRating: (messageId: number) => Promise<void>;
+  /** 관련 질문 클릭 → 이어서 질문 */
+  onAsk?: (query: string) => void;
 };
 
 type MessageBubbleProps = {
@@ -80,11 +82,12 @@ export function MessageBubble({ message, actions }: MessageBubbleProps) {
     },
     onClearRating: () =>
       messageId !== null && actions ? actions.onClearRating(messageId) : Promise.resolve(),
+    onAsk: actions?.onAsk,
   };
 
   return (
     <MessageActionsProvider value={messageActions}>
-      <div className="flex items-start gap-2">
+      <div className="animate-in fade-in flex items-start gap-2 duration-200">
         <ChatProfile />
         <div className="min-w-0 flex-1">
           {hasSections ? (

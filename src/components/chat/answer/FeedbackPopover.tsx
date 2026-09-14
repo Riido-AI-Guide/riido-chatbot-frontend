@@ -99,7 +99,7 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
                   onClick={() => setChoice(isChosen ? null : reason.code)}
                   className={cn(
                     'border-border-strong text-text-primary hover:bg-fill-hover active:bg-fill-press focus-visible:ring-ring/50 rounded-12 text-body-16 h-10 border px-[15px] font-medium tracking-[0.4px] transition-colors outline-none focus-visible:ring-3',
-                    isChosen ? 'bg-primary-soft border-primary-border' : 'bg-background-surface',
+                    isChosen ? 'bg-fill-press' : 'bg-background-surface',
                   )}
                 >
                   {reason.label}

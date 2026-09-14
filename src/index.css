@@ -680,6 +680,8 @@
     line-height: 28px;
   }
 
+  /* 불릿/단계 줄 끝에 붙는 근거 link 버튼 — li gap(16) 대신 Figma text-with-icon gap 8 */
+
   .answer-prose ul > li::before {
     content: '';
     flex: none;
@@ -753,10 +755,14 @@
   }
 }
 
-/* Figma sidebar-scrollbar — 12px 트랙(pad 3) 안에 6px 둥근 thumb(icon-tertiary), 화살표 없음 */
+/* Figma sidebar-scrollbar — 12px 트랙(pad 3) 안에 6px 둥근 thumb(icon-tertiary), 화살표 없음
+   Chrome/Safari는 ::-webkit-scrollbar만 쓴다 — 표준 scrollbar-width/color를 같이 주면 ::-webkit-* 가 무시되고
+   macOS 오버레이(폭 0) 스크롤바가 돼서 Figma의 12px 스크롤바 칸이 사라진다. 표준 속성은 Firefox에만. */
 @utility riido-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: var(--icon-tertiary) transparent;
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--icon-tertiary) transparent;
+  }
   &::-webkit-scrollbar {
     width: 12px;
   }
