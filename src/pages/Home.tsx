@@ -1,4 +1,4 @@
-import { Rocket, Wrench } from 'lucide-react';
+import { CalendarDays, Rocket, Wrench } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { AnswerLoader } from '@/components/chat/AnswerLoader';
@@ -16,10 +16,11 @@ import { SidebarRail } from '@/components/layout/SidebarRail';
 import { useChat } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 
-/** Figma quick-links-row — 엔트리 화면 입력창 위 추천 질문 (아이콘: rocket / wrench) */
+/** Figma quick-links-row — 엔트리 화면 입력창 위 추천 질문. 이용가이드에 답이 있는 질문(Figma 채팅 예시)으로 */
 const QUICK_LINKS = [
-  { icon: Rocket, query: '대기 작업, 백로그, 작업은 어떻게 다른가요?' },
-  { icon: Wrench, query: 'MCP 서버는 어떻게 연결하나요?' },
+  { icon: Rocket, query: '대기랑 백로그 차이가 뭔가요?' },
+  { icon: Wrench, query: 'AI 에이전트는 어떻게 설정하고 작업을 맡기나요?' },
+  { icon: CalendarDays, query: '미팅을 구글 캘린더와 연동할 수 있나요?' },
 ] as const;
 
 export default function Home() {
