@@ -33,8 +33,8 @@ export function JudgementAnswer({ title, sections }: Props) {
         <SectionBox variant="card" gap="lg">
           <SectionBlock section={method} />
           {limits && (
-            <SectionBox variant="inset">
-              <SectionBlock section={limits} />
+            <SectionBox variant="danger">
+              <SectionBlock section={limits} className="gap-[10px]" />
             </SectionBox>
           )}
           <RestSections sections={sections} except={LABELS} />

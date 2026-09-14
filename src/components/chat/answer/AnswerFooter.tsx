@@ -147,7 +147,8 @@ export function AnswerFooter() {
           <ActionButton
             icon={icon}
             label={label}
-            pressed={rating === value}
+            // 팝오버가 열려 있는 동안도 pressed — 평가 저장 API가 늦거나 실패해도 Figma처럼 바로 채워진다
+            pressed={rating === value || openRating === value}
             disabled={!isReady}
             onClick={() => void handleRate(value)}
           />

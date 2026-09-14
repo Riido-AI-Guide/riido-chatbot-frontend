@@ -9,14 +9,14 @@ const LABELS = SECTION_LABELS.no_answer;
 
 type Props = { title: string | null; sections: AnswerSection[] };
 
-/** 답변 불가: [안내] — 시안이 따로 없어 강조 박스 하나로 둔다. */
+/** 답변 불가 (Figma chat-light-not-guide): 제목 + 흰 answer-body-panel 안에 [안내] 한 문단 */
 export function NoAnswer({ title, sections }: Props) {
   const notice = pickSection(sections, '안내');
 
   return (
     <AnswerShell>
       <AnswerHeadline title={title} />
-      <SectionBox variant="note">
+      <SectionBox variant="card">
         <SectionBlock section={notice} />
         <RestSections sections={sections} except={LABELS} />
       </SectionBox>

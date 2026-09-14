@@ -112,8 +112,9 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
               : '질문이 구체적일수록 정확한 답변을 받을 수 있어요.'
           }
           className={cn(
-            'text-text-primary placeholder:text-text-tertiary text-body-16-reading field-sizing-content max-h-40 min-h-7 flex-1 resize-none self-center bg-transparent outline-none',
-            isExpanded && 'w-full pr-2',
+            'text-text-primary placeholder:text-text-tertiary text-body-16-reading field-sizing-content min-h-7 flex-1 resize-none self-center bg-transparent outline-none',
+            // Figma state=expanded: text-area 60px 고정(2줄까지 보임), 3줄부터 안쪽 스크롤(12px 스크롤바)
+            isExpanded && 'riido-scrollbar h-[60px] w-full flex-none overflow-y-auto pr-2',
             'disabled:cursor-not-allowed disabled:opacity-60',
           )}
         />

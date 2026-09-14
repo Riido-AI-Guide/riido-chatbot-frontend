@@ -1,6 +1,7 @@
 import { CalendarDays, Rocket, Wrench } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { AnswerFailedCard } from '@/components/chat/AnswerFailedCard';
 import { AnswerLoader } from '@/components/chat/AnswerLoader';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ContactDialogHost } from '@/components/contact/ContactDialog';
@@ -29,6 +30,7 @@ export default function Home() {
     title,
     messages,
     error,
+    errorKind,
     isSending,
     isRetrying,
     retryCount,
@@ -92,6 +94,7 @@ export default function Home() {
             className={cn(
               'mx-auto flex w-full flex-col',
               // 채팅: 맨 아래로 내렸을 때 마지막 답변 카드 ↔ 입력창 72px (푸터 위 pad 8 + 64)
+              // main이 스크롤바 칸(12px)을 항상 비워 두므로(scrollbar-gutter) 1168 기준 중앙 = Figma x184
               isEmpty ? 'max-w-[800px] pb-6' : 'max-w-[900px] pr-11 pb-16',
             )}
           >
@@ -114,6 +117,7 @@ export default function Home() {
                         onToggleBookmark: toggleBookmark,
                         onRate: rateMessage,
                         onClearRating: clearRating,
+                        onAsk: send,
                       }}
                     />
                   </div>
@@ -124,6 +128,13 @@ export default function Home() {
             {isSending && (
               <div className="mt-12">
                 <TypingIndicator />
+              </div>
+            )}
+
+            {/* Figma answer-creation-failed: 답변 자리(질문 아래 48px)에 주황 카드 + [다시 생성] */}
+            {error !== null && errorKind === 'answer' && !isSending && (
+              <div className="mt-12">
+                <AnswerFailedCard onRetry={retry} disabled={isBusy} />
               </div>
             )}
 
@@ -152,7 +163,7 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {(error !== null || isRetrying) && (
+            {((error !== null && errorKind === 'network') || isRetrying) && (
               <ErrorNotice
                 message={error ?? ''}
                 onRetry={retry}

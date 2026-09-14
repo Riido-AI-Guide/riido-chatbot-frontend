@@ -79,7 +79,12 @@ const answerComponents: Components = {
   p: ({ children }) => <p className="my-2 leading-7 first:mt-0 last:mb-0">{children}</p>,
   ul: ({ children }) => <ul>{children}</ul>,
   ol: ({ children }) => <ol>{children}</ol>,
-  li: ({ children }) => <li>{children}</li>,
+  // 텍스트를 span으로 감싸야 줄 끝에 근거 link 버튼을 인라인으로 붙일 수 있다 (SectionBlock)
+  li: ({ children }) => (
+    <li>
+      <span className="li-body min-w-0">{children}</span>
+    </li>
+  ),
 };
 
 type MarkdownProps = {

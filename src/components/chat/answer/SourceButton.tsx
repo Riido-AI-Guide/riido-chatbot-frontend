@@ -1,4 +1,5 @@
-import { Copy, Globe, Link } from 'lucide-react';
+import { Check, Copy, Globe, Link } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import type { Source } from '@/api/conversations';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -7,9 +8,37 @@ type SourceButtonProps = {
   sources: Source[];
 };
 
-/** 근거 문서 url을 클립보드로 (Figma link-list-copy) */
-function copyUrl(url: string) {
-  navigator.clipboard.writeText(url).catch(() => undefined);
+/** 근거 문서 url 복사 버튼 (Figma link-list-copy: default=copy → pressed=check) */
+function CopyUrlButton({ url }: { url: string }) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  useEffect(() => {
+    if (!isCopied) {
+      return;
+    }
+    const timer = setTimeout(() => setIsCopied(false), 1500);
+    return () => clearTimeout(timer);
+  }, [isCopied]);
+
+  return (
+    <button
+      type="button"
+      aria-label={isCopied ? '복사됨' : '링크 복사'}
+      onClick={() => {
+        navigator.clipboard
+          .writeText(url)
+          .then(() => setIsCopied(true))
+          .catch(() => undefined);
+      }}
+      className="flex size-4 shrink-0 items-center justify-center outline-none"
+    >
+      {isCopied ? (
+        <Check className="size-4" strokeWidth={1.2} aria-hidden />
+      ) : (
+        <Copy className="size-4" strokeWidth={1.2} aria-hidden />
+      )}
+    </button>
+  );
 }
 
 /**
@@ -70,14 +99,7 @@ export function SourceButton({ sources }: SourceButtonProps) {
                       <Globe className="size-4 shrink-0" strokeWidth={1.2} aria-hidden />
                       <span className="min-w-0 flex-1 truncate">{label}</span>
                     </a>
-                    <button
-                      type="button"
-                      aria-label="링크 복사"
-                      onClick={() => copyUrl(source.url ?? '')}
-                      className="flex size-4 shrink-0 items-center justify-center outline-none"
-                    >
-                      <Copy className="size-4" strokeWidth={1.2} aria-hidden />
-                    </button>
+                    <CopyUrlButton url={source.url} />
                   </span>
                 )}
               </li>

@@ -6,6 +6,7 @@ import {
   MessagesSquare,
   Moon,
   PanelLeft,
+  PanelLeftClose,
   SquarePen,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -58,10 +59,12 @@ function SectionChevron({
       onClick={onToggle}
       aria-label={isOpen ? `${label} 접기` : `${label} 펼치기`}
       aria-expanded={isOpen}
-      className="rounded-6 focus-visible:ring-ring/50 flex size-8 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
+      // Figma list-title-hover-bg-with-chevron: 기본엔 숨김, 줄에 마우스 올리면(또는 키보드 포커스) 우측 끝에 24px chevron
+      className="focus-visible:ring-ring/50 rounded-6 flex size-6 shrink-0 items-center justify-center opacity-0 transition-opacity outline-none group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:ring-3"
     >
+      {/* Figma chevron toggle: Direction=down(접힘) / up(펼침), icon-primary 24px */}
       <ChevronDown
-        className={cn('text-icon-secondary size-5 transition-transform', !isOpen && '-rotate-90')}
+        className={cn('text-icon-primary size-6 transition-transform', isOpen && 'rotate-180')}
         strokeWidth={ICON_STROKE}
         aria-hidden
       />
@@ -152,9 +155,17 @@ export function Sidebar({
           type="button"
           onClick={onCollapse}
           aria-label="사이드바 접기"
-          className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex size-10 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
+          className="group hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex size-10 shrink-0 items-center justify-center outline-none focus-visible:ring-3"
         >
-          <PanelLeft className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
+          {/* Figma sidebar-left: default=panel-left, hover-close=화살표 있는 panel-left-close */}
+          <PanelLeft
+            className="text-icon-primary size-6 group-hover:hidden group-focus-visible:hidden"
+            strokeWidth={ICON_STROKE}
+          />
+          <PanelLeftClose
+            className="text-icon-primary hidden size-6 group-hover:block group-focus-visible:block"
+            strokeWidth={ICON_STROKE}
+          />
         </button>
       </div>
 
@@ -204,12 +215,11 @@ export function Sidebar({
                         aria-label="답변 보관 해제"
                         title="답변 보관 해제"
                         onClick={() => void handleRemoveBookmark(bookmark.message.id)}
-                        className="text-icon-primary focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center outline-none group-focus-within/item:flex group-hover/item:flex focus-visible:ring-3"
+                        className="text-icon-tertiary hover:text-icon-primary active:text-icon-tertiary group/bm focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center transition-colors outline-none group-focus-within/item:flex group-hover/item:flex focus-visible:ring-3"
                       >
                         <BookmarkIcon
-                          className="size-6"
+                          className="size-6 fill-current group-active/bm:fill-none"
                           strokeWidth={ICON_STROKE}
-                          fill="currentColor"
                         />
                       </button>
                     </div>

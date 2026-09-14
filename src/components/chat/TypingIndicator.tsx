@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ChatProfile } from '@/components/chat/ChatProfile';
 
-/** 이 시간이 지나도 답이 없으면 안내 문구를 바꾼다 (Figma 코멘트 #57) */
+/** 이 시간이 지나도 답이 없으면 Figma delay-reponse 문구로 바꾼다 */
 const DELAY_NOTICE_MS = 8000;
 
 /**
@@ -28,7 +28,7 @@ export function TypingIndicator() {
       >
         <span className="text-shimmer text-body-16">
           {isDelayed
-            ? '자료를 찾아 정리하느라 조금 더 걸리고 있어요…'
+            ? '답변이 평소보다 오래 걸리고 있어요. 조금만 기다려 주세요.'
             : '이용 가이드 문서를 읽고 있습니다…'}
         </span>
       </div>
