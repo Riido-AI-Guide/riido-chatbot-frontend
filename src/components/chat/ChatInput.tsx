@@ -1,5 +1,13 @@
-import { useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { ArrowUp, Mic } from 'lucide-react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react';
+import { ArrowUp, Mic, Square } from 'lucide-react';
+import { useSpeechInput } from '@/hooks/useSpeechInput';
 import { ICON_STROKE } from '@/lib/icon';
 import { cn } from '@/lib/utils';
 
@@ -13,12 +21,27 @@ type ChatInputProps = {
  * 72px 박스: surface 배경 / border-disable 1px / radius 16 / shadow-m / pad 16/16/16/24 / gap 32
  * 우측 액션(gap 8): mic 40 원형(hover: surface-soft) + send 40 원형
  *   send disabled = fill-neutral(#F3F5F6) / active = button-inverse(#272F35) + 캔버스색 화살표
+ *   mic default → hover surface-soft → recording(듣는 중) = surface-strong 배경 + 20px 정지(square) 아이콘
  * 답변 대기 중엔 Figma chat-light-loading대로 send를 disabled로 둔다 (로더는 입력창 위 AnswerLoader).
  * 상태: empty(placeholder) → typing(글자 text-primary, send active) → expanded(두 줄 이상이면 세로 배치: 텍스트 아래 버튼 줄, gap 8)
  * 아래 안내문: Body/14 text-secondary, gap 10
  */
 export function ChatInput({ disabled, onSend }: ChatInputProps) {
   const [value, setValue] = useState('');
+  // 음성 입력(브라우저 내장 STT) — 확정된 문장을 입력창 뒤에 이어 붙인다
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const speech = useSpeechInput({
+    onTranscript: (text) => setValue((previous) => (previous ? `${previous} ${text}` : text)),
+    onError: setSpeechError,
+  });
+
+  useEffect(() => {
+    if (speechError === null) {
+      return;
+    }
+    const timer = setTimeout(() => setSpeechError(null), 4000);
+    return () => clearTimeout(timer);
+  }, [speechError]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   /** Figma state=expanded — 텍스트가 한 줄(28px)을 넘으면 버튼 줄이 아래로 내려간다 */
@@ -96,14 +119,38 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
         />
 
         <div className="flex h-10 shrink-0 items-end gap-2">
-          {/* TODO: 음성 입력 — 브라우저 SpeechRecognition 붙기 전까지 자리만 */}
           <button
             type="button"
-            disabled
-            aria-label="음성으로 질문하기 (준비 중)"
-            className="hover:bg-background-surface-soft flex size-10 items-center justify-center rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={speech.toggle}
+            disabled={disabled || !speech.isSupported}
+            aria-pressed={speech.isListening}
+            aria-label={
+              !speech.isSupported
+                ? '이 브라우저는 음성 입력을 지원하지 않아요'
+                : speech.isListening
+                  ? '음성 입력 멈추기'
+                  : '음성으로 질문하기'
+            }
+            title={!speech.isSupported ? '이 브라우저는 음성 입력을 지원하지 않아요' : undefined}
+            className={cn(
+              'flex size-10 items-center justify-center rounded-full transition-colors outline-none',
+              'focus-visible:ring-ring/50 focus-visible:ring-3',
+              'disabled:cursor-not-allowed disabled:opacity-50',
+              speech.isListening
+                ? 'bg-background-surface-strong'
+                : 'hover:bg-background-surface-soft',
+            )}
           >
-            <Mic className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
+            {speech.isListening ? (
+              <Square
+                className="text-icon-primary size-5"
+                strokeWidth={ICON_STROKE}
+                fill="currentColor"
+                aria-hidden
+              />
+            ) : (
+              <Mic className="text-icon-primary size-6" strokeWidth={ICON_STROKE} aria-hidden />
+            )}
           </button>
           <button
             type="submit"
@@ -121,6 +168,11 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
           </button>
         </div>
       </div>
+      {speechError !== null && (
+        <p className="text-status-danger-text text-body-14 text-center" role="alert">
+          {speechError}
+        </p>
+      )}
       <p className="text-text-secondary text-body-14 text-center">
         챗봇은 이용가이드 기반으로 답변하며, 문서에 없는 내용이나 최신 변경 사항은 정확하지 않을 수
         있습니다.
