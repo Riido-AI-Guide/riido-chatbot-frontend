@@ -755,6 +755,21 @@
   }
 }
 
+/* 페이지 이동 딤 — Dim 토큰으로 덮었다가 300ms ease-out으로 걷힌다 */
+@keyframes riido-route-dim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@utility route-dim {
+  animation: riido-route-dim var(--default-transition-duration, 300ms)
+    var(--default-transition-timing-function, ease-out) forwards;
+}
+
 /* Figma footer background — 입력창 뒤로 캔버스색이 위로 번진다.
    2겹: 162px(0% → 83%@22.4% → 100%@58%) + 93px(69px 아래에서 0% → 100%@74%) */
 @utility canvas-fade-up {

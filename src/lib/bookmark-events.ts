@@ -12,9 +12,7 @@ export function emitBookmarksChanged(change?: BookmarkChange) {
   window.dispatchEvent(new CustomEvent<BookmarkChange | undefined>(EVENT, { detail: change }));
 }
 
-export function subscribeBookmarksChanged(
-  listener: (change?: BookmarkChange) => void,
-): () => void {
+export function subscribeBookmarksChanged(listener: (change?: BookmarkChange) => void): () => void {
   const handler = (event: Event) => {
     listener((event as CustomEvent<BookmarkChange | undefined>).detail);
   };
