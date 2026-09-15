@@ -124,7 +124,9 @@ export default function Home() {
               // main이 스크롤바 칸(12px)을 항상 비워 두므로(scrollbar-gutter) 1168 기준 중앙 = Figma x184
               // 엔트리: 812 + pl-3 → 800 컬럼이 입력창·답변 카드와 같은 세로선에 온다.
               // (main이 스크롤바 12px를 늘 비워 두므로 그냥 중앙이면 6px 왼쪽으로 치우친다)
-              isEmpty ? 'max-w-[812px] pb-6 pl-3' : 'max-w-[900px] pr-11 pb-16',
+              // 엔트리 pb-24: 추천 칩이 푸터 위로 64px 떠오르는(입력창 위 24 + 칩 48 − 푸터 pt 8)
+              // 레이어라 그만큼을 비워 두지 않으면 기능 카드를 덮는다. 64 + 여유 32 = 96px
+              isEmpty ? 'max-w-[812px] pb-24 pl-3' : 'max-w-[900px] pr-11 pb-16',
             )}
           >
             {isEmpty ? (
