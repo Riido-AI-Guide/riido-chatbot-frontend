@@ -55,7 +55,7 @@ export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder="채팅 검색"
             aria-label="채팅 검색"
-            className="text-text-primary placeholder:text-text-tertiary text-body-14 w-full bg-transparent outline-none"
+            className="text-text-primary placeholder:text-text-tertiary text-body-14 h-5 w-full appearance-none bg-transparent p-0 leading-5 outline-none [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none"
           />
         </label>
       </div>
