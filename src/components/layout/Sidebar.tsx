@@ -158,7 +158,7 @@ export function Sidebar({
   return (
     <aside className="bg-fill-neutral-strong flex h-full w-[260px] shrink-0 flex-col shadow-[inset_-1px_0_0_var(--border-strong)]">
       {/* 헤더: 로고 + 서비스명 + 접기 토글 */}
-      <div className="flex shrink-0 items-center gap-4 p-3">
+      <div className="flex shrink-0 items-center gap-4 p-3 pl-4">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <img src={riidoSymbol} alt="" className="size-8 shrink-0" data-name="riido-symbol" />
           <span className="text-text-primary text-title-20 truncate font-semibold tracking-[-0.4px]">
@@ -184,7 +184,7 @@ export function Sidebar({
       </div>
 
       {/* 본문 */}
-      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto py-3 pl-3">
+      <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto py-3 pl-4">
         <SidebarItem icon={SquarePen} label="새 채팅" onClick={onNewChat} />
         {/* Figma chat-storage-section-scroll — 답변 보관 (펼치면 sidebar-list-item-1 목록) */}
         <SidebarItem
@@ -290,7 +290,7 @@ export function Sidebar({
 
       {/* 푸터 */}
       <div className="flex shrink-0 flex-col">
-        <div className="pl-3">
+        <div className="pl-4">
           <SidebarItem
             icon={MessageCircleMore}
             label="운영팀에 문의하기"
@@ -299,10 +299,10 @@ export function Sidebar({
         </div>
 
         <div className="border-border-strong border-t">
-          <p className="text-text-primary text-title-16 px-5 pt-[15px] pb-2 font-medium tracking-[-0.4px]">
+          <p className="text-text-primary text-title-16 px-5 pt-[15px] pb-2 pl-6 font-medium tracking-[-0.4px]">
             설정
           </p>
-          <div className="pl-3">
+          <div className="pl-4">
             <SidebarItem
               icon={Moon}
               label="다크모드"
@@ -314,7 +314,7 @@ export function Sidebar({
         </div>
 
         {/* Figma sidebar-footer-profile — 프로필 줄. 로그아웃은 Figma에 없어서 누르면 뜨는 메뉴에 넣는다 */}
-        <div className="border-border-strong border-t px-3 pt-[11px] pb-3">
+        <div className="border-border-strong border-t px-3 pt-[11px] pb-3 pl-4">
           <DropdownMenu>
             <DropdownMenuTrigger
               className="hover:bg-fill-surface-strong focus-visible:ring-ring/50 rounded-12 flex w-full items-center gap-2 text-left outline-none focus-visible:ring-3"

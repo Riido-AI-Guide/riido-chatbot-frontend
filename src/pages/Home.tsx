@@ -122,7 +122,11 @@ export default function Home() {
               'mx-auto flex w-full flex-col',
               // 채팅: 맨 아래로 내렸을 때 마지막 답변 카드 ↔ 입력창 72px (푸터 위 pad 8 + 64)
               // main이 스크롤바 칸(12px)을 항상 비워 두므로(scrollbar-gutter) 1168 기준 중앙 = Figma x184
-              isEmpty ? 'max-w-[800px] pb-6' : 'max-w-[900px] pr-11 pb-16',
+              // 엔트리: 812 + pl-3 → 800 컬럼이 입력창·답변 카드와 같은 세로선에 온다.
+              // (main이 스크롤바 12px를 늘 비워 두므로 그냥 중앙이면 6px 왼쪽으로 치우친다)
+              // 엔트리 pb-24: 추천 칩이 푸터 위로 64px 떠오르는(입력창 위 24 + 칩 48 − 푸터 pt 8)
+              // 레이어라 그만큼을 비워 두지 않으면 기능 카드를 덮는다. 64 + 여유 32 = 96px
+              isEmpty ? 'max-w-[812px] pb-24 pl-3' : 'max-w-[900px] pr-11 pb-16',
             )}
           >
             {isEmpty ? (
@@ -174,13 +178,21 @@ export default function Home() {
               (푸터 152 + 아래로 10px 더 내려온 만큼) + Layer blur 12 / Background blur 1.
               그 프레임도 clip content = true라 블러가 162px 경계에서 탁 잘린다 →
               바깥 박스에 overflow-hidden을 씌워 번짐을 잘라낸다 */}
+          {/* 오른쪽 12px는 스크롤바 자리 — 피그마 footer 폭 1168 = chat area 1180 − 스크롤바 12.
+              페이드가 스크롤바 위를 덮지 않아야 한다 */}
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-[-10px] h-[162px] overflow-hidden"
+            className="pointer-events-none absolute right-3 bottom-[-10px] left-0 h-[162px] overflow-hidden"
             aria-hidden
           >
-            <div className="canvas-fade-up size-full blur-[6px] backdrop-blur-[0.5px]" />
+            {/* 162px 레이어만 Layer blur 12(= CSS blur 6) */}
+            <div className="canvas-fade-up absolute inset-0 blur-[6px] backdrop-blur-[0.5px]" />
+            {/* 93px 레이어는 블러 없이 또렷하게 (푸터 위에서 69px 아래) */}
+            <div className="canvas-fade-up-bottom absolute inset-x-0 top-[69px] h-[93px]" />
           </div>
-          <div className="relative mx-auto flex w-full max-w-[812px] flex-col gap-2 pr-3">
+          {/* 입력창 800px를 답변 카드와 같은 세로선에 둔다.
+              피그마는 입력창이 푸터(1168) 기준 중앙이라 답변 카드보다 6px 왼쪽에 있는데,
+              그러면 세로 라인이 안 맞아서 답변 카드와 같은 전체폭 중앙으로 맞췄다 */}
+          <div className="relative mx-auto flex w-full max-w-[800px] flex-col gap-2">
             {((error !== null && errorKind === 'network') || isRetrying) && (
               <ErrorNotice
                 message={error ?? ''}
@@ -194,7 +206,7 @@ export default function Home() {
                   별도 레이어(입력창 위 24px, row 48px = -72px). 푸터 플로우에 넣지 않고
                   입력창 기준으로 떠 있게 해야 배경 그라데이션이 그 위로 그대로 비친다 */}
               {isEmpty && (
-                <div className="absolute inset-x-0 -top-[72px] flex scrollbar-none flex-nowrap items-center justify-center gap-2 overflow-x-auto px-2">
+                <div className="absolute inset-x-0 -top-[84px] flex scrollbar-none flex-nowrap items-center justify-center gap-2 overflow-x-auto px-2 py-3">
                   {QUICK_LINKS.map(({ icon, keyword, query }) => (
                     <QuickLinkChip
                       key={query}
