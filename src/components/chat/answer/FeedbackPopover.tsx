@@ -37,15 +37,18 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
     return () => controller.abort();
   }, [rating]);
 
-  const canSend = choice !== null && choice !== selected && !isSending;
+  // 좋아요↔싫어요를 갈아탈 때 이전 사유 코드가 남아 있으면 '고른 것'으로 치면 안 된다.
+  // 지금 띄운 사유 목록에 있는 코드만 유효하다.
+  const validChoice = choice !== null && reasons.some((r) => r.code === choice) ? choice : null;
+  const canSend = validChoice !== null && validChoice !== selected && !isSending;
 
   const handleSend = async () => {
-    if (choice === null || !canSend) {
+    if (validChoice === null || !canSend) {
       return;
     }
     setIsSending(true);
     try {
-      await onSend(choice);
+      await onSend(validChoice);
       onClose();
     } finally {
       setIsSending(false);
@@ -89,7 +92,7 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
             aria-label="상세 사유"
           >
             {reasons.map((reason) => {
-              const isChosen = reason.code === choice;
+              const isChosen = reason.code === validChoice;
               return (
                 <button
                   key={reason.code}

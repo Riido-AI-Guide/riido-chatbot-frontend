@@ -14,6 +14,9 @@ import { cn } from '@/lib/utils';
 type ChatInputProps = {
   disabled: boolean;
   onSend: (query: string) => void;
+  /** 추천 칩에 마우스를 올린 동안 보여줄 미리보기 문구.
+   *  placeholder 자리에 흐리게 뜨므로 입력창이 비어 있을 때만 보인다 */
+  preview?: string | null;
 };
 
 /**
@@ -26,7 +29,7 @@ type ChatInputProps = {
  * 상태: empty(placeholder) → typing(글자 text-primary, send active) → expanded(두 줄 이상이면 세로 배치: 텍스트 아래 버튼 줄, gap 8)
  * 아래 안내문: Body/14 text-secondary, gap 10
  */
-export function ChatInput({ disabled, onSend }: ChatInputProps) {
+export function ChatInput({ disabled, onSend, preview = null }: ChatInputProps) {
   const [value, setValue] = useState('');
   // 음성 입력(브라우저 내장 STT) — 확정된 문장을 입력창 뒤에 이어 붙인다
   const [speechError, setSpeechError] = useState<string | null>(null);
@@ -109,7 +112,8 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
           placeholder={
             disabled
               ? '답변을 기다리는 중이에요…'
-              : '질문이 구체적일수록 정확한 답변을 받을 수 있어요.'
+              : // 칩 호버 중엔 그 질문을 미리 보여준다 (누르면 실제 입력으로 확정된다)
+                (preview ?? '질문이 구체적일수록 정확한 답변을 받을 수 있어요.')
           }
           className={cn(
             'text-text-primary placeholder:text-text-tertiary text-body-16-reading field-sizing-content min-h-7 flex-1 resize-none self-center bg-transparent outline-none',

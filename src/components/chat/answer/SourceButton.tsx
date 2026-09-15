@@ -72,11 +72,15 @@ export function SourceButton({ sources }: SourceButtonProps) {
         sideOffset={8}
         // 마우스 호버로 열렸을 땐 포커스를 뺏지 않는다. 키보드로 연 경우에만 링크로 넘긴다.
         initialFocus={(openType) => openType === 'keyboard'}
+        // Figma 프로토타입: link → link-connection-content 오버레이가 transition: null(= Instant).
+        // 파일 안에 DISSOLVE/SMART_ANIMATE가 실제로 쓰인 곳이 따로 있으니 null은 '즉시'가 맞다.
+        animated={false}
         className="bg-fill-inverse shadow-l w-[200px] rounded-[16px] p-1"
       >
         <ul className="flex flex-col gap-0.5">
           {sources.map((source, index) => {
-            const label = source.section || source.docId;
+            // 문서 경로 구분자는 Figma 표기대로 '|' (서버는 '상위 > 하위'로 준다)
+            const label = (source.section || source.docId).replace(/\s*>\s*/g, ' | ');
             const rowClass =
               'text-text-secondary hover:bg-fill-hover-inverse hover:text-text-inverse active:bg-fill-press-inverse flex h-8 w-full items-center gap-1 rounded-12 px-2 py-[7px] text-caption-12 transition-colors outline-none focus-visible:text-text-inverse';
 

@@ -303,7 +303,8 @@
   --border-default: #272f35; /* Gray/900 */
   --border-strong: #4f5b63;
   --border-neutral: #4f5b63; /* Gray/700 */
-  --border-neutral-strong: #3a444b; /* Gray/800 */
+  --border-neutral-strong: #4f5b63; /* 피그마 변수 977:29 dark 실측값. Gray/800(#3a444b)로 잘못 들어가 있어서
+     info-box/step-list 등의 테두리가 배경과 거의 안 보이던 버그를 고침 */
   --border-disable: #3a444b;
   /* Button */
   --button-primary: #29d6c5; /* Mint/500 */
@@ -753,6 +754,45 @@
   to {
     background-position: -200% 0;
   }
+}
+
+/* 페이지 이동 딤 — Dim 토큰으로 덮었다가 300ms ease-out으로 걷힌다 */
+@keyframes riido-route-dim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@utility route-dim {
+  animation: riido-route-dim var(--default-transition-duration, 300ms)
+    var(--default-transition-timing-function, ease-out) forwards;
+}
+
+/* Figma footer background — 입력창 뒤로 캔버스색이 위로 번진다.
+   2겹: 162px(0% → 83%@22.4% → 100%@58%) + 93px(69px 아래에서 0% → 100%@74%) */
+@utility canvas-fade-up {
+  background-image:
+    linear-gradient(
+      to bottom,
+      var(--background-canvas-fade-transparent) 0%,
+      var(--background-canvas-fade-solid) 74%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--background-canvas-fade-transparent) 0%,
+      var(--background-canvas-fade-soft) 22.4%,
+      var(--background-canvas-fade-solid) 58%
+    );
+  background-repeat: no-repeat;
+  background-size:
+    100% 93px,
+    100% 162px;
+  background-position:
+    0 69px,
+    0 0;
 }
 
 /* Figma sidebar-scrollbar — 12px 트랙(pad 3) 안에 6px 둥근 thumb(icon-tertiary), 화살표 없음

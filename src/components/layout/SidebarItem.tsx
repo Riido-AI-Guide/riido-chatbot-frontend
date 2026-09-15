@@ -45,7 +45,8 @@ export function SidebarItem({
   return (
     <div
       className={cn(
-        'group/row rounded-12 my-1 flex h-10 w-full items-center pr-3 transition-colors',
+        // Figma: 줄 자체가 236px(=248-12) hover 배경, chevron·스위치는 그 오른쪽 끝에 딱 붙는다
+        'group/row rounded-12 my-1 mr-3 flex h-10 items-center transition-colors',
         onClick && 'has-[button:hover]:bg-fill-surface-strong',
         active && 'bg-fill-surface-strong',
         disabled && 'opacity-50',

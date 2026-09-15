@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { RequireAuth } from '@/components/RequireAuth';
+import { RouteDim } from '@/components/layout/RouteDim';
 import About from '@/pages/About';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
@@ -9,6 +10,8 @@ import Members from '@/pages/Members';
 function App() {
   return (
     <BrowserRouter>
+      {/* 페이지 이동 딤 (Figma Dim 토큰) */}
+      <RouteDim />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route

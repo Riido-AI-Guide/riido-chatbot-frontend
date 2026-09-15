@@ -39,6 +39,8 @@ type SidebarProps = {
   onNewChat: () => void;
   /** 사이드바 접기 (Figma sidebar-left 토글) */
   onCollapse: () => void;
+  /** 값이 바뀌면 "답변 보관" 목록을 편다 (접힌 레일에서 눌러 들어온 경우) */
+  openBookmarksKey?: number;
   /** 헤더 채팅 검색어 — 최근 대화를 제목으로 거른다 */
   filter?: string;
 };
@@ -59,12 +61,14 @@ function SectionChevron({
       onClick={onToggle}
       aria-label={isOpen ? `${label} 접기` : `${label} 펼치기`}
       aria-expanded={isOpen}
-      // Figma list-title-hover-bg-with-chevron: 기본엔 숨김, 줄에 마우스 올리면(또는 키보드 포커스) 우측 끝에 24px chevron
-      className="focus-visible:ring-ring/50 rounded-6 flex size-6 shrink-0 items-center justify-center opacity-0 transition-opacity outline-none group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:ring-3"
+      // Figma list-title-hover-bg-with-chevron: 기본엔 숨김, 줄에 마우스 올리면(또는 키보드 포커스) 우측 끝에 24px chevron.
+      // 피그마 실측: 회색 hover 배경 박스 우측 끝에서 6px 안쪽에 chevron이 위치한다(스위치는 반대로 끝에 딱 붙음)
+      className="focus-visible:ring-ring/50 rounded-6 mr-1.5 flex size-6 shrink-0 items-center justify-center opacity-0 transition-opacity outline-none group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:ring-3"
     >
-      {/* Figma chevron toggle: Direction=down(접힘) / up(펼침), icon-primary 24px */}
+      {/* Figma chevron toggle: Direction=down(접힘) / up(펼침), icon-primary 24px.
+          회전이 아니라 상하 반전(scaleY) 인터랙션 */}
       <ChevronDown
-        className={cn('text-icon-primary size-6 transition-transform', isOpen && 'rotate-180')}
+        className={cn('text-icon-primary size-6', isOpen && '-scale-y-100')}
         strokeWidth={ICON_STROKE}
         aria-hidden
       />
@@ -82,12 +86,14 @@ export function Sidebar({
   onSelect,
   onNewChat,
   onCollapse,
+  openBookmarksKey = 0,
   filter = '',
 }: SidebarProps) {
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [isBookmarksOpen, setIsBookmarksOpen] = useState(false);
+  // 레일의 "답변 보관"으로 펼쳐 들어온 경우(key>0)에는 처음부터 목록을 펴 둔다
+  const [isBookmarksOpen, setIsBookmarksOpen] = useState(openBookmarksKey > 0);
   const navigate = useNavigate();
   const { isDark, toggleTheme } = useTheme();
   const user = getCurrentUser();
@@ -99,7 +105,8 @@ export function Sidebar({
     }
     // 목록은 부가 기능 — 불러오기에 실패해도 채팅 자체는 계속되어야 하므로 조용히 비운다
     fetchConversations(userId)
-      .then(setConversations)
+      // 서버가 예상 밖의 형태를 주더라도 화면이 통째로 죽지 않게 배열만 받는다
+      .then((list) => setConversations(Array.isArray(list) ? list : []))
       .catch(() => setConversations([]));
   }, [userId, refreshKey]);
 
@@ -110,23 +117,30 @@ export function Sidebar({
     }
     const load = () => {
       fetchBookmarks(userId)
-        .then(setBookmarks)
+        .then((list) => setBookmarks(Array.isArray(list) ? list : []))
         .catch(() => setBookmarks([]));
     };
     load();
     return subscribeBookmarksChanged(load);
   }, [userId]);
 
+  // 레일에서 "답변 보관"을 눌러 들어오면 목록을 펴 둔다 (prop이 바뀔 때 렌더 중 보정 — effect 불필요)
+  const [seenBookmarksKey, setSeenBookmarksKey] = useState(openBookmarksKey);
+  if (openBookmarksKey !== seenBookmarksKey) {
+    setSeenBookmarksKey(openBookmarksKey);
+    setIsBookmarksOpen(true);
+  }
+
   const handleRemoveBookmark = async (messageId: number) => {
     setBookmarks((previous) => previous.filter((bookmark) => bookmark.message.id !== messageId));
     try {
       await removeBookmark(messageId);
-      emitBookmarksChanged();
+      emitBookmarksChanged({ messageId, bookmarked: false });
     } catch {
       // 실패하면 목록을 다시 받아 원상복구
       if (userId !== undefined) {
         fetchBookmarks(userId)
-          .then(setBookmarks)
+          .then((list) => setBookmarks(Array.isArray(list) ? list : []))
           .catch(() => undefined);
       }
     }
@@ -198,7 +212,9 @@ export function Sidebar({
                     key={bookmark.message.id}
                     className="border-icon-tertiary flex items-center gap-2 border-l"
                   >
-                    <div className="group/item hover:bg-fill-surface-strong focus-within:bg-fill-surface-strong rounded-12 flex h-10 min-w-0 flex-1 items-center pr-2">
+                    {/* Figma sidebar-list-item-1: 기본 상태엔 북마크 아이콘이 없고 호버해야 나온다.
+                        마우스로 눌러 생긴 포커스로는 계속 떠 있지 않게 focus-visible(키보드)만 본다 */}
+                    <div className="group/item hover:bg-fill-surface-strong has-focus-visible:bg-fill-surface-strong rounded-12 flex h-10 min-w-0 flex-1 items-center pr-2">
                       <button
                         type="button"
                         onClick={() => onSelect(bookmark.conversationId)}
@@ -215,7 +231,7 @@ export function Sidebar({
                         aria-label="답변 보관 해제"
                         title="답변 보관 해제"
                         onClick={() => void handleRemoveBookmark(bookmark.message.id)}
-                        className="text-icon-tertiary hover:text-icon-primary active:text-icon-tertiary group/bm focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center transition-colors outline-none group-focus-within/item:flex group-hover/item:flex focus-visible:ring-3"
+                        className="text-icon-tertiary hover:text-icon-primary active:text-icon-tertiary group/bm focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center transition-colors outline-none group-hover/item:flex group-has-focus-visible/item:flex focus-visible:ring-3"
                       >
                         <BookmarkIcon
                           className="size-6 fill-current group-active/bm:fill-none"
