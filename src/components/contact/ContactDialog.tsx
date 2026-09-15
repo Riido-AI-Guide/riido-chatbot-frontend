@@ -129,8 +129,10 @@ function ContactForm({ onClose }: { onClose: () => void }) {
               <span className="min-w-0 flex-1 truncate">{type ?? '문의 유형을 선택해주세요.'}</span>
               <ChevronDown
                 className={cn(
-                  'text-icon-primary size-6 shrink-0 transition-transform',
-                  isTypeOpen && 'rotate-180',
+                  // 사이드바 chevron과 동일하게 회전이 아니라 상하반전,
+                  // 피그마 프로토타입이 transition: null(= Instant)이라 트윈 없이 바로 뒤집는다
+                  'text-icon-primary size-6 shrink-0',
+                  isTypeOpen && '-scale-y-100',
                 )}
                 strokeWidth={ICON_STROKE}
               />

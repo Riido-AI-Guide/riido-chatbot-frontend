@@ -26,10 +26,13 @@ export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
           -z-10: 페이드가 absolute라 static인 이용가이드(book-open) 버튼보다 나중에 칠해져
           아이콘을 덮어버렸다. 음수 z로 내려서 헤더 내용 뒤에 깔리게 한다 */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-20 overflow-hidden"
+        className="pointer-events-none absolute top-0 right-3 left-0 -z-10 h-20 overflow-hidden"
         aria-hidden
       >
-        <div className="canvas-fade-down size-full blur-[6px] backdrop-blur-[0.5px]" />
+        {/* 80px 레이어만 Layer blur 12(= CSS blur 6)가 걸려 있다 */}
+        <div className="canvas-fade-down absolute inset-0 blur-[6px] backdrop-blur-[0.5px]" />
+        {/* 29px 레이어는 피그마에서 Layer blur가 꺼져 있어 또렷하게 깐다 */}
+        <div className="canvas-fade-down-top absolute inset-x-0 top-0 h-[29px]" />
       </div>
       {/* 페이드 배경(absolute) 위에 올라오도록 relative — 안 그러면 제목이 흐려 보인다 */}
       <h1
@@ -43,7 +46,7 @@ export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
 
       {/* 채팅 검색 — 검색 API 붙기 전까지는 사이드바 최근 대화를 제목으로 거른다 */}
       {/* Figma: 스크롤바(12px) 뺀 영역 기준 중앙 → 6px 왼쪽 */}
-      <div className="absolute top-1/2 left-[calc(50%-6px)] w-[392px] -translate-x-1/2 -translate-y-1/2">
+      <div className="absolute top-1/2 left-1/2 w-[392px] -translate-x-1/2 -translate-y-1/2">
         <label className="bg-background-surface-soft border-border-strong rounded-12 flex h-10 items-center gap-2 border px-[15px]">
           <Search className="text-icon-tertiary size-5 shrink-0" strokeWidth={ICON_STROKE} />
           <input

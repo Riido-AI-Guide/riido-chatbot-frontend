@@ -67,7 +67,7 @@ function MarkdownWithSource({
                 링크만 다음 줄로 떨어지면 안 된다. 본문이 길어 마지막 줄이 꽉 차면
                 링크가 혼자 내려가 버려서, 앞 낱말과 항상 붙어 다니게 고정한다 */}
             {'\u2060'}
-            <span className="ml-2 inline-flex align-middle">
+            <span className="ml-2 inline-flex h-[1lh] items-center align-top">
               <SourceButton sources={sources} />
             </span>
           </>,

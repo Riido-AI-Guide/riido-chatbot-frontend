@@ -1,6 +1,3 @@
-import { Leapfrog } from 'ldrs/react';
-import 'ldrs/react/Leapfrog.css';
-
 import { cn } from '@/lib/utils';
 
 type AnswerLoaderProps = {
@@ -8,10 +5,12 @@ type AnswerLoaderProps = {
 };
 
 /**
- * Figma `loader-leapfrog/loader-answer`(2611:4138) — 답변 생성 중 입력창 위(24px)에 떠 있는 36×28 글래스 pill.
- * background-glass(반투명) + radius 999 + backdrop blur, 안에 ldrs Leapfrog.
+ * Figma `loader-leapfrog/loader-answer`(2611:4138) — 답변 생성 중 입력창 위(24px)에 떠 있는 36×28 pill.
+ * 배경은 피그마 변수 977:26 20%(= --background-glass) + GLASS(backdrop blur) + radius 999.
  * 여백은 가운데 정렬이 아니라 피그마 값 그대로 좌우 8 / 위 4 / 아래 12 (8+20+8=36, 4+12+12=28).
- * Leapfrog 수치는 Figma 프레임(20×12, 점 4px, 간격 8)에 맞춘 size 20 (ldrs: 점 = size×0.22, 간격 = size×0.4).
+ * 위아래가 다른 건 점이 뛰어오를 공간 때문이고, 쉬는 점은 pill 세로 정중앙(14px)에 온다.
+ * 점 3개는 피그마 `loader-leapfrog`(2600:4222) frame=01~18 좌표를 그대로 옮긴 CSS 애니메이션
+ * (src/index.css `.riido-leapfrog`). ldrs는 점 지름이 4.4px(size×0.22)라 피그마 4px과 달라 걷어냈다.
  */
 export function AnswerLoader({ className }: AnswerLoaderProps) {
   return (
@@ -24,7 +23,11 @@ export function AnswerLoader({ className }: AnswerLoaderProps) {
       aria-label="답변 생성 중"
       data-name="loader-answer"
     >
-      <Leapfrog size="20" speed="2.5" color="var(--fill-inverse)" />
+      <span className="riido-leapfrog" aria-hidden>
+        <span />
+        <span />
+        <span />
+      </span>
     </div>
   );
 }
