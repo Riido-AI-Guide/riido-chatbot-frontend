@@ -49,23 +49,15 @@ export function WelcomeScreen() {
             이용가이드를 바탕으로 빠르고 정확하게 답변해드릴게요!
           </p>
         </div>
-        {/* Figma group `character` 392×344 — 바닥 그림자 3겹(Layer blur 20/12/8 → CSS blur는 절반인 10/6/4) 위에 캐릭터 이미지.
-            이미지는 346×346으로 (28, -33)에 놓고 위쪽을 잘라낸다 (imageTransform 1.132/0.994, offset -0.080/0.095).
-            윤서 요청으로 그림자까지 통째로 좌우반전(-scale-x-100) — Figma 원본은 오른쪽을 본다 */}
-        <div
-          className="relative h-[344px] w-[392px] shrink-0 -scale-x-100 overflow-hidden"
+        {/* Figma group `character` 392×344 — 윤서가 준 그림자 포함 렌더(1568×344 비율 = 392×344와 동일)로 교체.
+            그림자가 이미지에 구워져 있어서 CSS 그림자 3겹과 좌우반전이 더는 필요 없다 */}
+        <img
+          src={welcomeCharacter}
+          alt=""
           aria-hidden
           data-name="welcome-character"
-        >
-          <span className="absolute top-[256px] left-[135px] h-10 w-[191px] rounded-full bg-[#181d21]/22 blur-[10px]" />
-          <span className="absolute top-[263px] left-[126px] h-[26px] w-[172px] rounded-full bg-[#181d21]/36 blur-[6px]" />
-          <span className="absolute top-[262px] left-[223px] h-[22px] w-[46px] rounded-full bg-[#181d21] blur-[4px]" />
-          <img
-            src={welcomeCharacter}
-            alt=""
-            className="absolute top-[-33px] left-[28px] h-[346px] w-[346px] max-w-none"
-          />
-        </div>
+          className="h-[344px] w-[392px] shrink-0"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

@@ -61,9 +61,16 @@ function MarkdownWithSource({
       {sources.length > 0 &&
         target !== null &&
         createPortal(
-          <span className="ml-2 inline-flex align-middle">
-            <SourceButton sources={sources} />
-          </span>,
+          <>
+            {/* U+2060 word joiner — 이 자리에 줄바꿈을 막는다.
+                피그마 text-with-icon은 [텍스트][gap 8][link]이 한 줄(높이 28)이라
+                링크만 다음 줄로 떨어지면 안 된다. 본문이 길어 마지막 줄이 꽉 차면
+                링크가 혼자 내려가 버려서, 앞 낱말과 항상 붙어 다니게 고정한다 */}
+            {'\u2060'}
+            <span className="ml-2 inline-flex align-middle">
+              <SourceButton sources={sources} />
+            </span>
+          </>,
           target,
         )}
     </div>

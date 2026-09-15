@@ -143,12 +143,11 @@ function ContactForm({ onClose }: { onClose: () => void }) {
               sideOffset={-48}
               className="bg-background-surface/20 w-[264px] rounded-[16px] p-0 shadow-xl backdrop-blur-2xl"
             >
-              {/* 첫 줄은 항상 안내 문구로 고정 — 고른 항목은 아래 목록에만 체크가 붙는다 */}
+              {/* Figma `select type`(2759:4740) — 264×48, pad 12/16, gap 10, radius 16 16 0 0.
+                  첫 줄은 항상 안내 문구 + 체크 고정 (윤서 확인) */}
               <div className="text-text-primary text-body-16 flex h-12 items-center gap-2.5 rounded-t-[16px] px-4">
                 <span className="flex size-6 shrink-0 items-center justify-center" aria-hidden>
-                  {type === null && (
-                    <Check className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
-                  )}
+                  <Check className="text-icon-primary size-6" strokeWidth={ICON_STROKE} />
                 </span>
                 <span className="min-w-0 flex-1 truncate">문의 유형을 선택해주세요.</span>
               </div>

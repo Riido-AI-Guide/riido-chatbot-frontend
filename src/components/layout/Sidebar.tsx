@@ -61,12 +61,14 @@ function SectionChevron({
       onClick={onToggle}
       aria-label={isOpen ? `${label} 접기` : `${label} 펼치기`}
       aria-expanded={isOpen}
-      // Figma list-title-hover-bg-with-chevron: 기본엔 숨김, 줄에 마우스 올리면(또는 키보드 포커스) 우측 끝에 24px chevron
-      className="focus-visible:ring-ring/50 rounded-6 flex size-6 shrink-0 items-center justify-center opacity-0 transition-opacity outline-none group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:ring-3"
+      // Figma list-title-hover-bg-with-chevron: 기본엔 숨김, 줄에 마우스 올리면(또는 키보드 포커스) 우측 끝에 24px chevron.
+      // 피그마 실측: 회색 hover 배경 박스 우측 끝에서 6px 안쪽에 chevron이 위치한다(스위치는 반대로 끝에 딱 붙음)
+      className="focus-visible:ring-ring/50 rounded-6 mr-1.5 flex size-6 shrink-0 items-center justify-center opacity-0 transition-opacity outline-none group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:ring-3"
     >
-      {/* Figma chevron toggle: Direction=down(접힘) / up(펼침), icon-primary 24px */}
+      {/* Figma chevron toggle: Direction=down(접힘) / up(펼침), icon-primary 24px.
+          회전이 아니라 상하 반전(scaleY) 인터랙션 */}
       <ChevronDown
-        className={cn('text-icon-primary size-6 transition-transform', isOpen && 'rotate-180')}
+        className={cn('text-icon-primary size-6', isOpen && '-scale-y-100')}
         strokeWidth={ICON_STROKE}
         aria-hidden
       />

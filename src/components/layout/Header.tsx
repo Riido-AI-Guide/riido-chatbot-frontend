@@ -19,11 +19,18 @@ type HeaderProps = {
 export function Header({ title, searchQuery, onSearchChange }: HeaderProps) {
   return (
     <header className="relative z-10 flex h-16 shrink-0 items-center gap-3 pr-3 pl-8">
-      {/* Figma header background: 그라데이션 + Layer blur 12 + Background blur 1 (Figma 블러 반경 = CSS blur의 2배라 6 / 0.5로) → 밑으로 지나가는 내용이 살짝 흐려진다 */}
+      {/* Figma header background(1695:3035) — 1180×80 프레임에 Layer blur 12 + Background blur 1
+          (Figma 블러 반경 = CSS blur의 2배라 6 / 0.5로). 그 프레임은 clip content = true라
+          블러가 80px 경계에서 탁 잘린다 — CSS filter:blur()는 박스 밖으로 번지므로
+          바깥 박스에 overflow-hidden을 씌워야 같은 단면이 나온다.
+          -z-10: 페이드가 absolute라 static인 이용가이드(book-open) 버튼보다 나중에 칠해져
+          아이콘을 덮어버렸다. 음수 z로 내려서 헤더 내용 뒤에 깔리게 한다 */}
       <div
-        className="canvas-fade-down pointer-events-none absolute inset-x-0 top-0 h-20 blur-[6px] backdrop-blur-[0.5px]"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-20 overflow-hidden"
         aria-hidden
-      />
+      >
+        <div className="canvas-fade-down size-full blur-[6px] backdrop-blur-[0.5px]" />
+      </div>
       {/* 페이드 배경(absolute) 위에 올라오도록 relative — 안 그러면 제목이 흐려 보인다 */}
       <h1
         className={cn(

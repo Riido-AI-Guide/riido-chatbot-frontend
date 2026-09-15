@@ -7,15 +7,27 @@ import {
   ThumbsUp,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ReactElement, type SVGProps, useEffect, useState } from 'react';
 
 import type { FeedbackRating } from '@/api/feedback';
 import { FeedbackPopover } from '@/components/chat/answer/FeedbackPopover';
+import {
+  BookmarkFillIcon,
+  ThumbsDownFillIcon,
+  ThumbsUpFillIcon,
+} from '@/components/icons/answer-actions';
 import { useMessageActions } from '@/components/chat/answer/MessageActionsContext';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
 import { ICON_STROKE } from '@/lib/icon';
 import { openContactDialog } from '@/lib/contact-events';
 import { cn } from '@/lib/utils';
+
+/**
+ * 액션 버튼에 넣을 수 있는 아이콘.
+ * lucide 아이콘(ForwardRefExoticComponent)과, 디자이너가 따로 그린 채움 아이콘
+ * (src/components/icons/answer-actions.tsx의 평범한 함수 컴포넌트) 둘 다 받는다.
+ */
+type AnswerIcon = LucideIcon | ((props: SVGProps<SVGSVGElement>) => ReactElement);
 
 /** 복사 완료 표시(check 아이콘) 유지 시간 */
 const COPIED_MS = 1500;
@@ -45,9 +57,11 @@ async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 type ActionButtonProps = {
-  icon: LucideIcon;
+  icon: AnswerIcon;
   label: string;
-  /** Figma state=pressed — 채운 아이콘 */
+  /** Figma state=pressed — 채운 아이콘. outline을 fill=currentColor로 덧칠한 게 아니라
+   * 디자이너가 따로 그린 실루엣(src/assets/icons/*-fill.svg)이라 별도 컴포넌트로 넘긴다 */
+  filledIcon?: AnswerIcon;
   pressed?: boolean;
   /** 채우진 않고 색만 진하게 (복사 완료 check) */
   active?: boolean;
@@ -59,6 +73,7 @@ type ActionButtonProps = {
 /** Figma copy/save/like/dislike — 32px radius 10, hover: fill-surface-strong, pressed: 채운 아이콘 */
 function ActionButton({
   icon: Icon,
+  filledIcon: FilledIcon,
   label,
   pressed = false,
   active = false,
@@ -66,6 +81,7 @@ function ActionButton({
   onClick,
   className,
 }: ActionButtonProps) {
+  const Glyph = pressed && FilledIcon ? FilledIcon : Icon;
   return (
     <button
       type="button"
@@ -82,10 +98,10 @@ function ActionButton({
         className,
       )}
     >
-      <Icon
+      <Glyph
         className="size-6"
         strokeWidth={ICON_STROKE}
-        fill={pressed ? 'currentColor' : 'none'}
+        fill={pressed && !FilledIcon ? 'currentColor' : 'none'}
         aria-hidden
       />
     </button>
@@ -137,7 +153,12 @@ export function AnswerFooter() {
     setOpenRating(next);
   };
 
-  const ratingButton = (value: FeedbackRating, icon: LucideIcon, label: string) => (
+  const ratingButton = (
+    value: FeedbackRating,
+    icon: AnswerIcon,
+    filledIcon: AnswerIcon,
+    label: string,
+  ) => (
     <Popover
       open={openRating === value}
       // 여는 건 handleRate만 — 트리거가 스스로 열면 '평가 취소' 클릭에도 팝오버가 다시 뜬다
@@ -151,6 +172,7 @@ export function AnswerFooter() {
         render={
           <ActionButton
             icon={icon}
+            filledIcon={filledIcon}
             label={label}
             // 팝오버가 열려 있는 동안도 pressed — 평가 저장 API가 늦거나 실패해도 Figma처럼 바로 채워진다
             pressed={rating === value || openRating === value}
@@ -184,13 +206,14 @@ export function AnswerFooter() {
         />
         <ActionButton
           icon={Bookmark}
+          filledIcon={BookmarkFillIcon}
           label={actions?.bookmarked ? '답변 보관 해제' : '답변 보관'}
           pressed={actions?.bookmarked ?? false}
           disabled={!isReady}
           onClick={() => void actions?.onToggleBookmark(!actions.bookmarked).catch(() => undefined)}
         />
-        {ratingButton('GOOD', ThumbsUp, '좋아요')}
-        {ratingButton('BAD', ThumbsDown, '싫어요')}
+        {ratingButton('GOOD', ThumbsUp, ThumbsUpFillIcon, '좋아요')}
+        {ratingButton('BAD', ThumbsDown, ThumbsDownFillIcon, '싫어요')}
       </div>
 
       <button

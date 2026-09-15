@@ -303,7 +303,8 @@
   --border-default: #272f35; /* Gray/900 */
   --border-strong: #4f5b63;
   --border-neutral: #4f5b63; /* Gray/700 */
-  --border-neutral-strong: #3a444b; /* Gray/800 */
+  --border-neutral-strong: #4f5b63; /* 피그마 변수 977:29 dark 실측값. Gray/800(#3a444b)로 잘못 들어가 있어서
+     info-box/step-list 등의 테두리가 배경과 거의 안 보이던 버그를 고침 */
   --border-disable: #3a444b;
   /* Button */
   --button-primary: #29d6c5; /* Mint/500 */
