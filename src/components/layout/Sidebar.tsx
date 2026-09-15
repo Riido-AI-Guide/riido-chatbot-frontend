@@ -210,7 +210,9 @@ export function Sidebar({
                     key={bookmark.message.id}
                     className="border-icon-tertiary flex items-center gap-2 border-l"
                   >
-                    <div className="group/item hover:bg-fill-surface-strong focus-within:bg-fill-surface-strong rounded-12 flex h-10 min-w-0 flex-1 items-center pr-2">
+                    {/* Figma sidebar-list-item-1: 기본 상태엔 북마크 아이콘이 없고 호버해야 나온다.
+                        마우스로 눌러 생긴 포커스로는 계속 떠 있지 않게 focus-visible(키보드)만 본다 */}
+                    <div className="group/item hover:bg-fill-surface-strong has-focus-visible:bg-fill-surface-strong rounded-12 flex h-10 min-w-0 flex-1 items-center pr-2">
                       <button
                         type="button"
                         onClick={() => onSelect(bookmark.conversationId)}
@@ -227,7 +229,7 @@ export function Sidebar({
                         aria-label="답변 보관 해제"
                         title="답변 보관 해제"
                         onClick={() => void handleRemoveBookmark(bookmark.message.id)}
-                        className="text-icon-tertiary hover:text-icon-primary active:text-icon-tertiary group/bm focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center transition-colors outline-none group-focus-within/item:flex group-hover/item:flex focus-visible:ring-3"
+                        className="text-icon-tertiary hover:text-icon-primary active:text-icon-tertiary group/bm focus-visible:ring-ring/50 rounded-6 hidden size-6 shrink-0 items-center justify-center transition-colors outline-none group-hover/item:flex group-has-focus-visible/item:flex focus-visible:ring-3"
                       >
                         <BookmarkIcon
                           className="size-6 fill-current group-active/bm:fill-none"
