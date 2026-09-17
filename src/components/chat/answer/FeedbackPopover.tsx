@@ -7,6 +7,7 @@ import {
   type FeedbackReason,
   type FeedbackReasonCode,
 } from '@/api/feedback';
+import { useScrollBoundary } from '@/components/chat/ScrollBoundaryContext';
 import { PopoverContent } from '@/components/ui/popover';
 import { ICON_STROKE } from '@/lib/icon';
 import { cn } from '@/lib/utils';
@@ -28,6 +29,9 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
   const [reasons, setReasons] = useState<FeedbackReason[]>([]);
   const [choice, setChoice] = useState<FeedbackReasonCode | null>(selected);
   const [isSending, setIsSending] = useState(false);
+  // footer(sticky)를 뺀 메시지 영역 기준으로 충돌 계산 — 안 그러면 맨 아래 답변에서
+  // 팝오버가 footer/트리거 줄과 겹쳐 뜬다 (Home.tsx ScrollBoundaryProvider 참고)
+  const scrollBoundary = useScrollBoundary();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -60,6 +64,8 @@ export function FeedbackPopover({ rating, selected, onSend, onClose }: FeedbackP
       side="bottom"
       align="start"
       sideOffset={8}
+      collisionBoundary={scrollBoundary ?? undefined}
+      collisionPadding={8}
       className="bg-answer-card border-border-disable shadow-l w-[494px] max-w-[calc(100vw-32px)] rounded-[16px] border px-8 py-6"
     >
       <div className="flex flex-col items-end gap-6">

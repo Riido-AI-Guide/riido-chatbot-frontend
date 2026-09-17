@@ -16,11 +16,16 @@ function PopoverContent({
   sideOffset = 4,
   align = 'center',
   alignOffset = 0,
+  collisionBoundary,
+  collisionPadding,
   animated = true,
   children,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    'align' | 'alignOffset' | 'side' | 'sideOffset' | 'collisionBoundary' | 'collisionPadding'
+  > & {
     /** 피그마 프로토타입이 Instant(transition: null)인 팝오버는 false로 둬서 페이드·줌을 끈다 */
     animated?: boolean;
   }) {
@@ -31,6 +36,8 @@ function PopoverContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionBoundary={collisionBoundary}
+        collisionPadding={collisionPadding}
         className="isolate z-50"
       >
         <PopoverPrimitive.Popup
