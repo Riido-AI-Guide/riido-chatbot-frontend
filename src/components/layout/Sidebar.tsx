@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
-import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, logout } from '@/lib/auth';
 import { openContactDialog } from '@/lib/contact-events';
 import { emitBookmarksChanged, subscribeBookmarksChanged } from '@/lib/bookmark-events';
 import { ICON_STROKE } from '@/lib/icon';
@@ -338,7 +338,7 @@ export function Sidebar({
             <DropdownMenuContent side="top" align="start" className="w-[236px]">
               <DropdownMenuItem
                 onClick={() => {
-                  clearCurrentUser();
+                  logout();
                   navigate('/login', { replace: true });
                 }}
               >
