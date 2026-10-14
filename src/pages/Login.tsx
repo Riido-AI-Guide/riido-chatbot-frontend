@@ -6,7 +6,7 @@ import loginLight from '@/assets/brand/login-light.jpg';
 import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { toUserMessage } from '@/api/client';
 import { loginUser } from '@/api/users';
-import { saveCurrentUser } from '@/lib/auth';
+import { GUEST_NAME, saveCurrentUser } from '@/lib/auth';
 import { useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
@@ -27,15 +27,12 @@ export default function Login() {
   const trimmed = name.trim();
   const canSubmit = trimmed.length > 0 && !isSubmitting;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!canSubmit) return;
-
+  async function login(loginName: string) {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const user = await loginUser(trimmed);
+      const user = await loginUser(loginName);
       saveCurrentUser({ id: user.id, name: user.name });
       navigate('/', { replace: true });
     } catch (err) {
@@ -43,6 +40,17 @@ export default function Login() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!canSubmit) return;
+    void login(trimmed);
+  }
+
+  function handleGuestLogin() {
+    if (isSubmitting) return;
+    void login(GUEST_NAME);
   }
 
   return (
@@ -62,7 +70,7 @@ export default function Login() {
 
         <form
           onSubmit={handleSubmit}
-          className="flex h-[338px] w-[256px] shrink-0 flex-col items-center justify-between py-8"
+          className="flex min-h-[338px] w-[256px] shrink-0 flex-col items-center justify-between py-8"
           data-name="login-card-content"
         >
           <div className="flex w-full flex-col items-center gap-6">
@@ -97,19 +105,31 @@ export default function Login() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={cn(
-              'rounded-16 text-body-16 flex h-12 w-full items-center justify-center px-4 py-3 font-medium tracking-[-0.4px] transition-colors outline-none',
-              'focus-visible:ring-ring/50 focus-visible:ring-3',
-              canSubmit
-                ? 'bg-primary-solid text-text-primary active:bg-primary-solid-strong active:duration-100'
-                : 'bg-fill-disable text-text-disable cursor-not-allowed',
-            )}
-          >
-            {isSubmitting ? '로그인 중…' : '로그인'}
-          </button>
+          <div className="flex w-full flex-col items-center gap-2">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className={cn(
+                'rounded-16 text-body-16 flex h-12 w-full items-center justify-center px-4 py-3 font-medium tracking-[-0.4px] transition-colors outline-none',
+                'focus-visible:ring-ring/50 focus-visible:ring-3',
+                canSubmit
+                  ? 'bg-primary-solid text-text-primary active:bg-primary-solid-strong active:duration-100'
+                  : 'bg-fill-disable text-text-disable cursor-not-allowed',
+              )}
+            >
+              {isSubmitting ? '로그인 중…' : '로그인'}
+            </button>
+
+            {/* 닉네임 없이 기본 사용자(guest)로 들어가는 텍스트 버튼 */}
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={isSubmitting}
+              className="text-text-tertiary hover:text-text-secondary text-body-14 rounded-4 focus-visible:ring-ring/50 underline underline-offset-2 transition-colors outline-none focus-visible:ring-3 disabled:cursor-not-allowed"
+            >
+              게스트 모드
+            </button>
+          </div>
         </form>
       </div>
     </div>

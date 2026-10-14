@@ -19,7 +19,7 @@ import {
 import riidoSymbol from '@/assets/brand/riido-symbol-teal.png';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
-import { clearCurrentUser, getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, logout } from '@/lib/auth';
 import { openContactDialog } from '@/lib/contact-events';
 import { ICON_STROKE } from '@/lib/icon';
 import { useTheme } from '@/lib/theme';
@@ -152,7 +152,7 @@ export function SidebarRail({ onNewChat, onExpand, onOpenBookmarks }: SidebarRai
             <DropdownMenuContent side="right" align="end" className="w-[236px]">
               <DropdownMenuItem
                 onClick={() => {
-                  clearCurrentUser();
+                  logout();
                   navigate('/login', { replace: true });
                 }}
               >
